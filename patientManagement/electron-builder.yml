@@ -1,0 +1,12 @@
+appId: com.gpapatient.nextron
+productName: GPQ Patient Management
+copyright: Copyright © 2023 JayKles Corp.
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - from: .
+    filter:
+      - package.json
+      - app
+publish: null
