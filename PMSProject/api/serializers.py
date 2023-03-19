@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import *
 
 
-        
+
 class TreatmentRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = TreatmentRecord
@@ -25,7 +25,7 @@ class ToothStatusSerializer(serializers.ModelSerializer):
         fields = "__all__"
 class DentitionSerializer(serializers.ModelSerializer):
     # TODO: Add Edit and Delete for the Teeth Status connected to the Dentition
-    teeth_status = ToothStatusSerializer('patient_tooth_condition',many=True)
+    teeth_status = ToothStatusSerializer('tooth_condition',many=True)
     class Meta:
         model = Dentition
         fields = ['patientId', 'teeth_status','occulusion','appliances','rmd']
@@ -56,6 +56,26 @@ class PatientSerialzer (serializers.ModelSerializer):
                   'nickname',
                   'mobile_number',
                   'email','address','occupation','reason']
+# ===========================================================    
+class PatientOverviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Patient
+        fields = ['id', 
+                  'last_name', 
+                  'first_name', 
+                  'sex', 
+                  'last_visit', 
+                  ]
+class HistoryOverviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Patient
+        fields = ['id',
+                  'name', 
+                  'treatment', 
+                  'date', 
+                  'location']
+
+
 
 
 

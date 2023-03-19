@@ -26,7 +26,12 @@ class Patient(models.Model):
     email=models.EmailField(null=True, blank=True)
     occupation=models.CharField(max_length=50)
     reason=models.TextField()
-
+    @property
+    def name(self):
+        return self.last_name + ', ' + self.first_name
+    @property
+    def last_visit(self):
+        return TreatmentRecord.objects.latest('date').date
 class PatientWoman(models.Model):
     patientId=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_woman_info")
     pregnancy=models.BooleanField(default=False)
