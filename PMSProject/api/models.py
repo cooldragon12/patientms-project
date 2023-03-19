@@ -83,13 +83,16 @@ class TreatmentRecord (models.Model):
     balance=models.DecimalField(decimal_places=2,max_digits=10, null=True, blank=True)
 
 class Address (models.Model):
-    patientId=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_address")
+    patientId=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="address")
     building_number=models.CharField(max_length=20, default="", null=True, blank=True)
     street= models.CharField(max_length=50, default="",null=True, blank=True)
     village= models.CharField(max_length=50, default="", null=True, blank=True)
     barangay= models.CharField(max_length=50)
     city=models.CharField(max_length=50)
     province= models.CharField(max_length=50)
+    @property
+    def full_address(self):
+        return f"{self.building_number} {self.street},{self.village},{self.barangay},{self.city},{self.province}"
     def __str__(self) -> str:
         return f"{self.building_number} {self.street},{self.village},{self.barangay},{self.city},{self.province}"
 class Procedure(models.Model):

@@ -43,10 +43,19 @@ class PatientMinorSerializer(serializers.ModelSerializer):
         model = PatientMinor
         fields = "__all__"
 class PatientSerialzer (serializers.ModelSerializer):
-    address = AddressSerializer("patient_address",many=False, read_only=True)
+    address = AddressSerializer(read_only=True)
     class Meta:
         model= Patient
-        fields = ['first_name','middle_name','last_name','age','birthday','civil_status','religion','sex','nickaname','mobile_number','email','address','occupation','reason']
+        fields = ['first_name',
+                  'middle_name',
+                  'last_name',
+                  'age',
+                  'birthday',
+                  'civil_status',
+                  'religion','sex',
+                  'nickname',
+                  'mobile_number',
+                  'email','address','occupation','reason']
 
 
 
