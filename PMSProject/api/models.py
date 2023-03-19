@@ -33,13 +33,13 @@ class Patient(models.Model):
     def last_visit(self):
         return TreatmentRecord.objects.latest('date').date
 class PatientWoman(models.Model):
-    patientId=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_woman_info")
+    patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_woman_info")
     pregnancy=models.BooleanField(default=False)
     nursing=models.BooleanField(default=False)
     birth_control=models.BooleanField(default=False)
 
 class PatientMinor(models.Model):
-    patientId=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_minor_info")
+    patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_minor_info")
     guardian_name=models.CharField(max_length=150)
     occupation_guardian=models.CharField(max_length=50, null=True, blank=True)
 
@@ -66,7 +66,7 @@ class PatientInformation(models.Model):
         AB2="ab-","AB-"
         UNKNOWN="unknown","Unknown"
 
-    patientId=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_full_info")
+    patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_full_info")
     goodhealth=models.BooleanField(default=False)
     current_treatment=models.CharField(max_length=255,null=True, blank=True)
     isIllnessOrOperation=models.CharField(max_length=255,default=Choice1.NA, choices=Choice1.choices) 
@@ -79,7 +79,7 @@ class PatientInformation(models.Model):
     condition=models.CharField(max_length=100, null=True, blank=True)
 
 class TreatmentRecord (models.Model):
-    patientId=models.ForeignKey(Patient,on_delete=models.CASCADE, related_name="patient_treatments")
+    patient_id=models.ForeignKey(Patient,on_delete=models.CASCADE, related_name="patient_treatments")
     date=models.DateField()
     tooth_no=models.PositiveBigIntegerField()
     procedure=models.CharField(max_length=255)
@@ -88,7 +88,7 @@ class TreatmentRecord (models.Model):
     balance=models.DecimalField(decimal_places=2,max_digits=10, null=True, blank=True)
 
 class Address (models.Model):
-    patientId=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="address")
+    patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="address")
     building_number=models.CharField(max_length=20, default="", null=True, blank=True)
     street= models.CharField(max_length=50, default="",null=True, blank=True)
     village= models.CharField(max_length=50, default="", null=True, blank=True)
@@ -106,14 +106,27 @@ class Procedure(models.Model):
 
 class Dentition(models.Model):
     """Dentition Status and Treatment Needs Record, Part of Dental Record"""
+    class PeriodontalChoices(models.TextChoices):
+        GINGIVITIS = "gingivitis", "GINGIVITIS"
+        EARLYPERIO = "early periodontitis", "EARLY PERIODONTITIS"
+        MODPERIO = "moderate periodontitis", "MODERATE PERIODONTITIS"
+        ADVPERIO = "advanced periodontitis", "ADVANCED PERIODONTITIS"
     class OcclusionChoices(models.TextChoices):
         MOLAR="class(molar)","CLASS(MOLAR)"
         OVERJET="overjet","OVERJET"
         OVERBITE="overbite","OVERBITE"
         MDC="midline deviation crossbite","MIDLINE DEVIATION CROSSBITE"
-
+    class AppliancesChoices(models.TextChoices):
+        ORTHODONTIC = "orthodontic", "ORTHODONTIC"
+        STAYPLATE = "stayplate", "STAYPLATE"
+        OTHERS = models.CharField(max_length=50, null= True, blank= True)
+    class TMDChoices(models.TextChoices):
+        CLENCHING = "clenching", "CLENCHING"
+        CLICKING = "clicking", "CLICKING"
+        TRISMUS = "trismus", "TRISMUS"
+        MUSCLESPASM = "muscle spasm ", "MUSCLE SPASM"
     # Why there is no choices for screening and appliances?
-    patientId=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_dentition",choices=OcclusionChoices.choices)
+    patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_dentition",choices=OcclusionChoices.choices)
     periodontal_screening=models.CharField(max_length=25)
     occlusion=models.CharField(max_length=25)
     appliances=models.CharField(max_length=25)
@@ -144,6 +157,6 @@ class ToothStatus(models.Model):
         # Others
         Cm = "Cm", "Cingenitally Missing"
         Sp = "Sp", "Supernumerary"
-    patientId=models.ForeignKey(Dentition,on_delete=models.CASCADE, related_name="patient_tooth_status")
+    patient_id=models.ForeignKey(Dentition,on_delete=models.CASCADE, related_name="patient_tooth_status")
     tooth_no=models.PositiveBigIntegerField()
     conditions=models.CharField(max_length=50, null=True, blank=True, choices=Conditions.choices, default="")
