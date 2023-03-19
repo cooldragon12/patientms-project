@@ -97,16 +97,45 @@ class Procedure(models.Model):
     cost= models.DecimalField(decimal_places=2,max_digits=10, null=True, blank=True)
 
 class Dentition(models.Model):
-
+    """Dentition Status and Treatment Needs Record, Part of Dental Record"""
     class OcclusionChoices(models.TextChoices):
         MOLAR="class(molar)","CLASS(MOLAR)"
         OVERJET="overjet","OVERJET"
         OVERBITE="overbite","OVERBITE"
         MDC="midline deviation crossbite","MIDLINE DEVIATION CROSSBITE"
 
-
+    # Why there is no choices for screening and appliances?
     patientId=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_dentition",choices=OcclusionChoices.choices)
-    teeth_no=models.JSONField()
+    periodontal_screening=models.CharField(max_length=25)
     occlusion=models.CharField(max_length=25)
     appliances=models.CharField(max_length=25)
-    rmd=models.CharField(max_length=25)
+    tmd=models.CharField(max_length=25)
+
+class ToothStatus(models.Model):
+    """Tooth Status or Condition for Dentition Status and Treatment Needs Record"""
+    class Conditions(models.TextChoices):
+        D = "D", "Decayed"
+        M = "M", "Missing"
+        F = "F", "Filled"
+        I = "I", "Caries Indicated for Extraction"
+        RF = "RF", "Root Fragment"
+        MO = "MO", "Missing due to Other Cause"
+        Im = "Im", "Impacted Tooth"
+        # Restorations & Prosthetics
+        J = "J", "Jacket Crown"
+        A = "A", "Amalgam Filling"
+        AB = "AB", "Abutment"
+        P = "P", "Pontic"
+        In = "In", "Inlay"
+        Fx = "Fx", "Fixed Cure Composite"
+        S = "S", "Sealants"
+        Rm = "Rm", "Removable Denture"
+        # Surgery
+        X = "X", "Extraction due to Caries"
+        XO = "XO", "Extraction due to Other Cause"
+        # Others
+        Cm = "Cm", "Cingenitally Missing"
+        Sp = "Sp", "Supernumerary"
+    patientId=models.ForeignKey(Dentition,on_delete=models.CASCADE, related_name="patient_tooth_status")
+    tooth_no=models.PositiveBigIntegerField()
+    conditions=models.CharField(max_length=50, null=True, blank=True, choices=Conditions.choices, default="")
