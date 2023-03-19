@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from PMSProject.api.migrations.serializers import PatientSerialzer,PatientWomanSerializer,PatientMinorSerializer,PatientInformationSerializer,TreatmentRecordSerializer,AddressSerializer,ProcedureSerializer,DentitionSerializer
-from PMSProject.api.models import Patient, PatientMinor, PatientWoman,PatientInformation,TreatmentRecord,Address,Procedure,Dentition
+from .serializers import PatientSerialzer,PatientWomanSerializer,PatientMinorSerializer,PatientInformationSerializer,TreatmentRecordSerializer,AddressSerializer,ProcedureSerializer,DentitionSerializer
+from .models import Patient, PatientMinor, PatientWoman,PatientInformation,TreatmentRecord,Address,Procedure,Dentition
 
 
 class PatientViewSet(viewsets.ModelViewSet):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from PMSProject.api.models import Patient, PatientMinor, PatientWoman,PatientInformation,TreatmentRecord,Address,Procedure,Dentition
+from .models import Patient, PatientMinor, PatientWoman,PatientInformation,TreatmentRecord,Address,Procedure,Dentition
 class PatientSerialzer (serializers.ModelSerializer):
     class Meta:
         model= Patient

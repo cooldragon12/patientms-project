@@ -1,6 +1,6 @@
 from rest_framework import routers
 
-from PMSProject.api.views import PatientViewSet,PatientMinorViewSet,PatientWomanViewSet,PatientInformationViewSet,TreatmentRecordViewSet,AddressViewSet,ProcedureViewSet,DentitionViewSet
+from .views import PatientViewSet,PatientMinorViewSet,PatientWomanViewSet,PatientInformationViewSet,TreatmentRecordViewSet,AddressViewSet,ProcedureViewSet,DentitionViewSet
 
 router = routers.SimpleRouter()
 router.register(r'patient', PatientViewSet)
