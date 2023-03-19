@@ -1,1 +1,6 @@
 /env
+node_modules
+*.log
+.next
+app
+dist
