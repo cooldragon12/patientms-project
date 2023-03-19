@@ -33,6 +33,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         },
         loader:'dots',
         
+        
       }}
     >
         <RouterTransition/>

@@ -20,7 +20,15 @@ export const Patient = zod.object({
 })
 
 export type Patient = zod.infer<typeof Patient>;
-
-
 export type Patients = [Patient];
+
+export interface PatientOverview {
+    patient_id: string;
+    first_name: string;
+    last_name: string;
+    sex: string;
+    last_visit: string;
+    link: string;
+    contact: string;
+}
 

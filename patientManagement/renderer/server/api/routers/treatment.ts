@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import {z} from 'zod'
 import {publicProcedure, router} from '../../trpc';
-import { GET, PATCH, POST } from './HTTP';
+import { GET, PATCH, POST } from '../../HTTP';
 import { Procedure } from '../../../schema/procedure'; 
 import { API_URL } from '../../root';
 import { TreatmentRecord } from '../../../schema/treatment';

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { createStyles, Button, Group, rem,SegmentedControl, Title, useMantineTheme} from '@mantine/core';
 
 import { RegularTable }from '../components/list/table';
-
 const useLayoutStyle = createStyles((theme)=>({
   main:{
     display:"flex",
@@ -31,6 +30,13 @@ const useLayoutStyle = createStyles((theme)=>({
   }
 }))
 
+/**
+ * ### History of clinic Page
+ * 
+ * The page is the log of every patients treatment history for the day
+ * @param props data(serverProp)
+ * @static Log of every treatment for the day
+ */
 function ClinicHistory(props) {
   const theme = useMantineTheme()
   const { classes, cx } = useLayoutStyle();
@@ -59,48 +65,48 @@ function ClinicHistory(props) {
           />
         </Group>
         
-        <RegularTable columns={["pid", "Name", "Treatment", "Date"]} data={props.data}/>
+        <RegularTable columns={["pid", "Name", "Treatment", "Date"]} data={props.data} empty_message={`No History of Treatment for ${section.replace("_", " ")}`}/>
       </div>
     </React.Fragment>
   )
 }
-export async function getServerSideProps(context) {
-  const data = [
-    {
-      "pid":"1",
-      "Name":"Johndel Encabo",
-      "Treatment":"Nagpabunot",
-      "Date":"Today"
-    },
-    {
-      "pid":"2",
-      "Name":"Johndel Encabo",
-      "Treatment":"Nagpabunot",
-      "Date":"Today"
-    },
-    {
-      "pid":"3",
-      "Name":"Johndel Encabo",
-      "Treatment":"Nagpabunot",
-      "Date":"Today"
-    },
-    {
-      "pid":"4",
-      "Name":"Johndel Encabo",
-      "Treatment":"Nagpabunot",
-      "Date":"Today"
-    },
-    {
-      "pid":"5",
-      "Name":"Johndel Encabo",
-      "Treatment":"Nagpabunot",
-      "Date":"Today"
-    },
-  ]
-  return {
-    props:{data:data}
-  }
-}
+// export async function getServerSideProps(context) {
+//   const data = [
+//     {
+//       "pid":"1",
+//       "Name":"Johndel Encabo",
+//       "Treatment":"Nagpabunot",
+//       "Date":"Today"
+//     },
+//     {
+//       "pid":"2",
+//       "Name":"Johndel Encabo",
+//       "Treatment":"Nagpabunot",
+//       "Date":"Today"
+//     },
+//     {
+//       "pid":"3",
+//       "Name":"Johndel Encabo",
+//       "Treatment":"Nagpabunot",
+//       "Date":"Today"
+//     },
+//     {
+//       "pid":"4",
+//       "Name":"Johndel Encabo",
+//       "Treatment":"Nagpabunot",
+//       "Date":"Today"
+//     },
+//     {
+//       "pid":"5",
+//       "Name":"Johndel Encabo",
+//       "Treatment":"Nagpabunot",
+//       "Date":"Today"
+//     },
+//   ]
+//   return {
+//     props:{data:data}
+//   }
+// }
 // export async const getServerSideProps = (context) {
 
 //   return {

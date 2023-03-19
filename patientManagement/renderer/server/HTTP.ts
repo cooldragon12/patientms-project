@@ -53,3 +53,15 @@ export const PUT = async (url:string, data)=>{
 
     return response;
 }
+
+export const DELETE= async (url:string, data)=>{
+    const context:RequestInit = {
+        method:"DELETE",
+        body:data,
+        ...defaultContext
+    }
+
+    const  response = await fetch(url, context)
+
+    return response;
+}

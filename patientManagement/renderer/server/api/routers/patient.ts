@@ -3,7 +3,7 @@ import { TRPCError } from '@trpc/server';
 import {z} from 'zod'
 import { API_URL } from '../../root';
 import { Patient } from '../../../schema/patient';
-import { GET, PATCH, POST } from './HTTP';
+import { GET, PATCH, POST } from '../../HTTP';
 
 
 const patientRouter = router({
@@ -24,10 +24,9 @@ const patientRouter = router({
         
 
         return resp.json()
-         
         
         
-
+        
     }),
     // add a patient
     addPatient: publicProcedure
