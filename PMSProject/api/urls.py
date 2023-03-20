@@ -1,6 +1,6 @@
 from rest_framework import routers
 
-from .views import PatientViewSet,PatientMinorViewSet,PatientWomanViewSet,PatientInformationViewSet,TreatmentRecordViewSet,AddressViewSet,ProcedureViewSet,DentitionViewSet
+from .views import *
 
 router = routers.SimpleRouter(trailing_slash=False)
 router.register(r'patients', PatientViewSet)
@@ -12,4 +12,5 @@ router.register(r'treatment', TreatmentRecordViewSet)
 router.register(r'address', AddressViewSet)
 router.register(r'procedure', ProcedureViewSet)
 router.register(r'dentition', DentitionViewSet)
+router.register(r'patients-overview', PatientListViewSet)
 urlpatterns = router.urls
