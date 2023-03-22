@@ -42,38 +42,40 @@ class PatientMinorSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientMinor
         fields = "__all__"
-class PatientSerialzer (serializers.ModelSerializer):
+class PatientSerialzer (serializers.HyperlinkedModelSerializer):
     address = AddressSerializer(read_only=True)
+    patient_treatments = serializers.HyperlinkedRelatedField(view_name='treatmentrecord-detail', many=True, read_only=True,allow_null=True)
+    patient_full_info = serializers.HyperlinkedRelatedField(view_name='patientinformation-detail', read_only=True, lookup_field='pk', allow_null=True)
+    patient_dentition = serializers.HyperlinkedRelatedField(view_name='dentition-detail', read_only=True, lookup_field='pk', allow_null=True)
+    patient_treatments = serializers.HyperlinkedRelatedField(view_name='treatmentrecord-detail', many=True, lookup_field='pk',read_only=True,allow_null=True)
     class Meta:
         model= Patient
-        fields = ['first_name',
-                  'middle_name',
-                  'last_name',
-                  'age',
-                  'birthday',
-                  'civil_status',
-                  'religion','sex',
-                  'nickname',
-                  'mobile_number',
-                  'email','address','occupation','reason']
-# ===========================================================    
-class PatientOverviewSerializer(serializers.ModelSerializer):
+        fields = [
+            'first_name',
+            'middle_name',
+            'last_name',
+            'age',
+            'birthday',
+            'civil_status',
+            'religion','sex',
+            'nickname',
+            'mobile_number',
+            'email','address',
+            'occupation','reason',
+            'patient_treatments',
+            'patient_full_info', 
+            'patient_dentition']
+# =========================================================    
+class PatientOverviewSerializer(serializers.HyperlinkedModelSerializer):
+    patient_api_url = serializers.HyperlinkedIdentityField(view_name='patients-detail', lookup_field='pk')
     class Meta:
         model=Patient
-        fields = ['id', 
-                  'last_name', 
-                  'first_name', 
-                  'sex', 
-                  'last_visit', 
-                  ]
+        fields = ['id', 'last_name', 'first_name', 'sex', 'last_visit', 'patient_url', 'patient_api_url']
 class HistoryOverviewSerializer(serializers.ModelSerializer):
+    name = serializers.SlugRelatedField(slug_field='patient_treatments.name', read_only=True)
     class Meta:
-        model=Patient
-        fields = ['id',
-                  'name', 
-                  'treatment', 
-                  'date', 
-                  'location']
+        model = TreatmentRecord
+        fields = ['patient_id','name', 'procedure', 'date', 'record_url']
 
 
 

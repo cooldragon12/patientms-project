@@ -26,12 +26,18 @@ class Patient(models.Model):
     email=models.EmailField(null=True, blank=True)
     occupation=models.CharField(max_length=50)
     reason=models.TextField()
+
+    def __str__(self) -> str:
+        return self.first_name + ' ' + self.last_name
     @property
     def name(self):
         return self.last_name + ', ' + self.first_name
     @property
     def last_visit(self):
         return TreatmentRecord.objects.latest('date').date
+    
+    def patient_url(self):
+        return "/patient/" + str(self.id) + "/"
 class PatientWoman(models.Model):
     patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_woman_info")
     pregnancy=models.BooleanField(default=False)
@@ -78,6 +84,7 @@ class PatientInformation(models.Model):
     bloodtype=models.CharField(max_length=50,default=BloodtypeChoices.UNKNOWN,choices=BloodtypeChoices.choices)
     condition=models.CharField(max_length=100, null=True, blank=True)
 
+    # def 
 class TreatmentRecord (models.Model):
     patient_id=models.ForeignKey(Patient,on_delete=models.CASCADE, related_name="patient_treatments")
     date=models.DateField()
@@ -86,7 +93,8 @@ class TreatmentRecord (models.Model):
     amount_charged=models.DecimalField(decimal_places=2,max_digits=10,)
     amount_paid=models.DecimalField(decimal_places=2,max_digits=10,null=True, blank=True)
     balance=models.DecimalField(decimal_places=2,max_digits=10, null=True, blank=True)
-
+    def record_url(self):
+        return "/treatment/"+str(self.id)
 class Address (models.Model):
     patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="address")
     building_number=models.CharField(max_length=20, default="", null=True, blank=True)
