@@ -28,7 +28,7 @@ export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", set
         setSelection((current) => (current.length === data.length ? [] : data.map((item) => item.patient_id)));
     const rows_skelelon = columns.map((row, index)=>{
 
-        return (<tr key={row}>
+        return (<tr key={row + "s"}>
             {
                 columns.map((column, index)=><td key={row+""+column}><Skeleton  height={8} mt={7} radius="xl"/></td>)
             }
@@ -47,7 +47,7 @@ export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", set
                         return (
                             <td key={row[value]}>
                                 
-                                    <Link key={row.patient_id} href={row.linked_location}>
+                                    <Link key={row.patient_id} href={row.patient_url}>
                                         <a>{row[value]}</a>
                                     </Link>
                                 
@@ -75,7 +75,7 @@ export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", set
                                     <Menu.Dropdown>
                                     <Menu.Label>Operations</Menu.Label>
                                         <Menu.Item onClick={() => toggleSelect(row.patient_id)}>Select</Menu.Item>
-                                        <Menu.Item rightSection={<IconLink/>}  key={row.patient_id +"-"+"link"} component={"a"} href={row.linked_location}>Open</Menu.Item>
+                                        <Menu.Item rightSection={<IconLink/>}  key={row.patient_id +"-"+"link"} >Open</Menu.Item>
                                     <Menu.Divider />
                                         <Menu.Item onClick={() => props.editHandler}>Edit</Menu.Item>
                                         <Menu.Item onClick={() => props.deleteHandler}>Delete</Menu.Item>
@@ -98,7 +98,7 @@ export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", set
         <ScrollArea h={600} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
             <Table withBorder={true} verticalSpacing="sm" horizontalSpacing="sm" className={classes.table}>
                 <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
-                    <tr>
+                    <tr key={"Header Patient"}>
                         
                         {
                             columns.map((column, index)=>

@@ -11,9 +11,6 @@ const useLayoutStyle = createStyles((theme)=>({
     flexDirection:"column",
     gap:".5rem"
   },
-  gButton:{
-    justifyContent:"end"
-  },
   button:{
     borderRadius:"0px",
     backgroundColor:theme.white,
@@ -49,7 +46,7 @@ function ClinicHistory(props) {
       <div className={classes.main}>
       <Title>History Treatment</Title>
 
-        <Group noWrap spacing={0} className={classes.gButton}>
+        <Group noWrap spacing={0} position="right">
           <SegmentedControl
             value={section}
             onChange={(value: 'today' | 'yesterday' | 'this_week' | 'this_month') => setSection(value)}

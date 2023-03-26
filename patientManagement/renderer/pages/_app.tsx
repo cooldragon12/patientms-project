@@ -2,11 +2,13 @@ import React, {useEffect, useState} from 'react';
 import type { AppProps } from 'next/app';
 import {MantineProvider} from '@mantine/core';
 import { MainPages } from '../components/page/Configuration';
-// import '../styles/globals.css';
-
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import { ModalsProvider } from '@mantine/modals';
 import Sidebar from '../components/Sidebar';
 import { RouterTransition } from '../components/RouteTransition';
 import { useRouter } from 'next/router';
+import { OperationProvider } from '../@context/operation';
+import {modals} from '../components/page/modals';
 // const SideBar = React.lazy(()=> import )
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -36,10 +38,14 @@ function MyApp({ Component, pageProps }: AppProps) {
         
       }}
     >
-        <RouterTransition/>
-        <Sidebar pages={MainPages}>
-          <Component {...pageProps} />
-        </Sidebar>
+        <OperationProvider>
+      <ModalsProvider modals={modals}>
+          <RouterTransition/>
+          <Sidebar pages={MainPages}>
+            <Component {...pageProps} />
+          </Sidebar>
+      </ModalsProvider>
+        </OperationProvider>
     </MantineProvider>
   );
 }
