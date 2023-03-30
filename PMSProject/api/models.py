@@ -1,5 +1,5 @@
 from django.db import models
-
+from multiselectfield import MultiSelectField
 # Create your models here.
 
 class Patient(models.Model):
@@ -51,16 +51,8 @@ class PatientMinor(models.Model):
 
 class PatientInformation(models.Model):
     
-    class Choice1(models.TextChoices): #isIllness or Operation choices
-        ILLNESS="illness","Illness"
-        OPERATION="operation","Operation"
-        NA="n/a","N/A"
-    
-    class Choice2(models.TextChoices): #isAlchohol or drugs choices
-        ALCHOHOL="alchohol","Alchohol"
-        DRUGS="drugs","Drugs"
-        NA="n/a","N/A"
 
+    
     class BloodtypeChoices(models.TextChoices):
         A1="a+","A+"
         A2="a-","A-"
@@ -75,11 +67,11 @@ class PatientInformation(models.Model):
     patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_full_info")
     goodhealth=models.BooleanField(default=False)
     current_treatment=models.CharField(max_length=255,null=True, blank=True)
-    isIllnessOrOperation=models.CharField(max_length=255,default=Choice1.NA, choices=Choice1.choices) 
+    isIllnessOrOperation=models.CharField(max_length=255, null=True, blank=True) 
     hospitalization=models.BooleanField(default=False)
     medication=models.CharField(max_length=255,null=True, blank=True)
     tobacco=models.BooleanField(default=False)
-    isAlchoholOrDrugs=models.CharField(max_length=255,default=Choice2.NA,choices=Choice2.choices) 
+    isAlcoholOrDrugs=models.BooleanField(default=False, null=True) 
     allergies=models.CharField(max_length=255,null=True, blank=True )
     bloodtype=models.CharField(max_length=50,default=BloodtypeChoices.UNKNOWN,choices=BloodtypeChoices.choices)
     condition=models.CharField(max_length=100, null=True, blank=True)
@@ -94,7 +86,7 @@ class TreatmentRecord (models.Model):
     amount_paid=models.DecimalField(decimal_places=2,max_digits=10,null=True, blank=True)
     balance=models.DecimalField(decimal_places=2,max_digits=10, null=True, blank=True)
     def record_url(self):
-        return "/treatment/"+str(self.id)
+        return "/treatment/"+str(self.patient_id)
 class Address (models.Model):
     patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="address")
     building_number=models.CharField(max_length=20, default="", null=True, blank=True)
@@ -127,18 +119,18 @@ class Dentition(models.Model):
     class AppliancesChoices(models.TextChoices):
         ORTHODONTIC = "orthodontic", "ORTHODONTIC"
         STAYPLATE = "stayplate", "STAYPLATE"
-        OTHERS = models.CharField(max_length=50, null= True, blank= True)
+        OTHERS = "", ""
     class TMDChoices(models.TextChoices):
         CLENCHING = "clenching", "CLENCHING"
         CLICKING = "clicking", "CLICKING"
         TRISMUS = "trismus", "TRISMUS"
         MUSCLESPASM = "muscle spasm ", "MUSCLE SPASM"
     # Why there is no choices for screening and appliances?
-    patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_dentition",choices=OcclusionChoices.choices)
-    periodontal_screening=models.CharField(max_length=25)
-    occlusion=models.CharField(max_length=25)
-    appliances=models.CharField(max_length=25)
-    tmd=models.CharField(max_length=25)
+    patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_dentition")
+    periodontal_screening=MultiSelectField(max_length=100,choices=PeriodontalChoices.choices)
+    occlusion=MultiSelectField( max_length=100,choices=OcclusionChoices.choices)
+    appliances=MultiSelectField(max_length=100, choices=AppliancesChoices.choices)
+    tmd=MultiSelectField( max_length=100,choices=TMDChoices.choices)
 
 class ToothStatus(models.Model):
     """Tooth Status or Condition for Dentition Status and Treatment Needs Record"""
