@@ -6,15 +6,20 @@ import { useEffect } from 'react';
 import { NavigationProgress, nprogress } from '@mantine/nprogress';
 import { Avatar, Box, Card, Divider, Group, Text } from "@mantine/core";
 import { LabelText } from "../../components/text_label";
+import { useQuery } from "@tanstack/react-query";
+import { getPatientDetail } from "../../server/request";
 
 
 
-  
 
- 
 const PatientProfile = (props)=>{
     const router = useRouter();
     const {patient_id} = router.query
+    const TreatmentData = useQuery({
+        queryKey: ["patient", patient_id],
+        queryFn: ()=>getPatientDetail(props.patient.patient_treatment),
+
+    })
     const [loading, setLoading] = React.useState(true);
     useEffect(() => {
         const handleStart = (url: string) => url !== router.asPath && nprogress.start();
@@ -111,7 +116,6 @@ const PatientProfile = (props)=>{
 export async function getServerSideProps(context) {
     const {patient_id} = context.query
     try{
-
         const res = await fetch(`http://localhost:3000/api/patients/${patient_id}`)
         const data = await res.json()
         return {

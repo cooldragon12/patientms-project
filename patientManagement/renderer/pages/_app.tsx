@@ -3,14 +3,13 @@ import type { AppProps } from 'next/app';
 import {MantineProvider} from '@mantine/core';
 import { MainPages } from '../components/page/Configuration';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import { ModalsProvider } from '@mantine/modals';
+
 import Sidebar from '../components/Sidebar';
 import { RouterTransition } from '../components/RouteTransition';
 import { useRouter } from 'next/router';
 import { OperationProvider } from '../@context/operation';
-import {modals} from '../components/page/modals';
+import {queryClient} from '../server'
 // const SideBar = React.lazy(()=> import )
-
 function MyApp({ Component, pageProps }: AppProps) {
 
   const router = useRouter();
@@ -38,14 +37,16 @@ function MyApp({ Component, pageProps }: AppProps) {
         
       }}
     >
+      <QueryClientProvider client={queryClient}>
         <OperationProvider>
-      <ModalsProvider modals={modals}>
+      
           <RouterTransition/>
           <Sidebar pages={MainPages}>
             <Component {...pageProps} />
           </Sidebar>
-      </ModalsProvider>
+      
         </OperationProvider>
+      </QueryClientProvider>
     </MantineProvider>
   );
 }
