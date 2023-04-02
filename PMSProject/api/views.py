@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from rest_framework import viewsets, mixins, generics
+from rest_framework import viewsets, mixins
+from rest_framework.decorators import action
 from .serializers import *
 from .models import *
 
@@ -12,6 +12,12 @@ class PatientViewSet(viewsets.ModelViewSet):
     queryset = Patient.objects.all()
     serializer_class = PatientSerialzer
     lookup_field = "pk"
+    @action(detail=False, methods=['get'], url_path='overview')
+    def list_overview(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = PatientOverviewSerializer(queryset, many=True)
+        return Response(serializer.data)
+
     
 class PatientWomanViewSet(viewsets.ModelViewSet):
     queryset = PatientWoman.objects.all()
@@ -48,7 +54,4 @@ class HistoryTreatmentRecordViewSet(mixins.ListModelMixin, viewsets.GenericViewS
     queryset = TreatmentRecord.objects.all()
     serializer_class = HistoryOverviewSerializer
     
-class PatientListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = Patient.objects.all()
-    serializer_class = PatientOverviewSerializer  
 
