@@ -1,10 +1,13 @@
-import React, {useState} from 'react';
+import React, {useState, useReducer} from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 
 import { createStyles, Button, Group, rem,SegmentedControl, Title, useMantineTheme} from '@mantine/core';
 
 import { RegularTable }from '../components/list/table';
+import { showNotification } from '@mantine/notifications';
+import searchSortReducer, { SearchSortState } from '../components/reducer/SearchSort';
+import { IClinicHistoryRecord } from '../schema/treatment';
 const useLayoutStyle = createStyles((theme)=>({
   main:{
     display:"flex",
@@ -27,6 +30,16 @@ const useLayoutStyle = createStyles((theme)=>({
   }
 }))
 
+const reducer = searchSortReducer<IClinicHistoryRecord>;
+const initialState:SearchSortState<IClinicHistoryRecord> = {
+  data: [],
+  filteredData: [],
+  searchQuery: null,
+  sortBy: "id",
+  ascending: true,
+  currentPage: 1,
+  itemsPerPage: 3,
+}
 /**
  * ### History of clinic Page
  * 
@@ -38,6 +51,7 @@ function ClinicHistory(props) {
   const theme = useMantineTheme()
   const { classes, cx } = useLayoutStyle();
   const [section, setSection] = useState<'today' | 'yesterday' | 'this_week' | 'this_month'>('today');
+  const [state, dispatch] = useReducer(reducer, initialState);
   return (
     <React.Fragment>
       <Head>
@@ -45,7 +59,6 @@ function ClinicHistory(props) {
       </Head>
       <div className={classes.main}>
       <Title>History Treatment</Title>
-
         <Group noWrap spacing={0} position="right">
           <SegmentedControl
             value={section}
@@ -104,10 +117,23 @@ function ClinicHistory(props) {
 //     props:{data:data}
 //   }
 // }
-// export async const getServerSideProps = (context) {
+// export async function getServerSideProps(context) {
+//   var data = []
+//   try {
+//     const res = await fetch("http://localhost:3000/api/history")
+//     data = await res.json();
 
-//   return {
-//     props:{},
+//   }catch (e){
+//     showNotification({
+//       title: "Error",
+//       message: "Failed to fetch data",
+//       color: "red",
+//       icon: "exclamation-circle"
+
+//     })
+//     return {
+//       props:{data:data}
+//     }
 //   }
 // } 
 

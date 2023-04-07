@@ -1,7 +1,6 @@
-import {useEffect} from 'react';
 import { zodResolver,useForm, UseFormReturnType } from '@mantine/form'; 
 import { createContext, useState, Dispatch,SetStateAction } from 'react'
-import { PatientAddress, PatientDentition, PatientFullInformation, PatientInformation, Patients } from '../schema/patient';
+import { PatientAddress, PatientBasicInformation, PatientDentition, PatientFullInformation, PatientInformation, PatientMedicalHistory, Patients } from '../schema/patient';
 import { notifications } from '@mantine/notifications';
 // import { DELETE, POST } from '../server/request';
 
@@ -9,10 +8,12 @@ interface OperationContextType {
     addPatient: (data:PatientFullInformation) => void,
     editPatient: (id:string) => void,
     deletePatient: (id:string) => void,
-    setTempData: Dispatch<SetStateAction<PatientFullInformation>>,
-    tempData: Patients | PatientFullInformation |PatientAddress | PatientDentition | PatientInformation,
-    form: UseFormReturnType<PatientFullInformation>,
-    
+    basic_form: UseFormReturnType<PatientBasicInformation>,
+    medicalhistory_form: UseFormReturnType<PatientMedicalHistory>,
+    dentition_form: UseFormReturnType<PatientDentition>,
+
+    anchor: {href:string, label:string}[],
+    setAnchor: Dispatch<SetStateAction<{href:string, label:string}[]>>,
     // opened:boolean,
     // open:()=>void,
     // close:()=>void,
@@ -23,21 +24,36 @@ export const OperationContext = createContext<OperationContextType>({
     addPatient: () => void 0,
     editPatient: () => void 0,
     deletePatient: () => void 0,
-    setTempData: ()=> void 0,
-    tempData: {} as PatientFullInformation,
-    form: {} as UseFormReturnType<PatientFullInformation>,
+    
+    basic_form: {} as UseFormReturnType<PatientBasicInformation>,
+    medicalhistory_form: {} as UseFormReturnType<PatientMedicalHistory>,
+    dentition_form: {} as UseFormReturnType<PatientDentition>,
+
+    anchor: [{href:"/", label:"Home"}],
+    setAnchor: ()=> void 0,
     // opened:false,
     // open:()=>void 0,
     // close:()=>void 0,
 })
 
 export const OperationProvider = ({ children }: { children: React.ReactNode }) => {
-    const [tempData, setTempData] = useState<PatientFullInformation>({} as PatientFullInformation);
     
+    const [anchor, setAnchor] = useState([{href:"/", label:"Home"}]);
     // const [opened, { open, close }] = useDisclosure(false);
-    const form = useForm<PatientFullInformation>({
-        initialValues: tempData as PatientFullInformation,
-        validate: zodResolver(PatientFullInformation),
+    const basic_form = useForm<PatientBasicInformation>({
+        // initialValues: PatientBasicInformation,
+        validate: zodResolver(PatientBasicInformation),
+        
+    })
+
+    const medicalhistory_form = useForm<PatientMedicalHistory>({
+        // initialValues: tempData as PatientFullInformation,
+        validate: zodResolver(PatientMedicalHistory),
+        
+    })
+    const dentition_form = useForm<PatientDentition>({
+        // initialValues: tempData as PatientDentition,
+        validate: zodResolver(PatientDentition),
         
     })
     const addPatient = (data:PatientFullInformation) => {
@@ -102,9 +118,11 @@ export const OperationProvider = ({ children }: { children: React.ReactNode }) =
             addPatient, 
             editPatient, 
             deletePatient, 
-            tempData, 
-            setTempData,
-            form
+            basic_form,
+            medicalhistory_form,
+            dentition_form,
+            anchor,
+            setAnchor
             // opened,
             // open,
             // close

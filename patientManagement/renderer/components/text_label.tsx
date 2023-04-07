@@ -1,12 +1,12 @@
-import { Group, Text } from "@mantine/core"
+import { Stack, Text } from "@mantine/core"
 
 export const LabelText= (props) => {
     return (
-        <Group spacing="sm">
-            <Text weight={"bold"}>{props.label}</Text>
-            <Text>
+        <Stack spacing="xs">
+            <Text weight={"normal"}>{props.label}</Text>
+            <Text weight={"bold"}>
                 {props.children}
             </Text>
-        </Group>
+        </Stack>
     )
 }

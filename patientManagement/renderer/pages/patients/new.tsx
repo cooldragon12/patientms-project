@@ -13,10 +13,10 @@ import {
  Checkbox,
  Container,
  Modal,
- Stack,
+ Stack
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import { useForm, UseFormReturnType } from "@mantine/form";
+import { useForm, UseFormReturnType, } from "@mantine/form";
 import Head from "next/head";
 
 import { useState, useContext,useEffect } from "react";
@@ -196,7 +196,7 @@ const PageForm_1 = ({form}) => {
 const PageForm_2 = ({ form }) => {
  const [openField, setOpenField] = useState([]);
  const toggle = (val, id) => {
-  val === "yes"
+  val
    ? setOpenField((field) => [...field, id])
    : setOpenField((field) => field.filter((item) => item !== id));
  };
@@ -221,25 +221,29 @@ const PageForm_2 = ({ form }) => {
     checked={form.values.isAlcoholOrDrugs}
 
    />
+   
    <Radio.Group
     label="Have you ever hospitalization?"
     onChange={(val) => toggle(val, 3)}
+    {...form.getInputProps("hospitalization")}
    >
     <Group>
      <Radio value="yes" label="Yes" />
-     <Radio value="no" label="No" />
+     <Radio value="no" label="No"  />
     </Group>
     <Collapse in={openField.includes(3)} transitionDuration={600}>
      <TextInput
-      {...form.getInputProps("hospitalization")}
       variant={"filled"}
       label="If so, when and why?"
+      {...form.getInputProps("hospitalization")}
      />
     </Collapse>
    </Radio.Group>
    <Radio.Group
     label="Are you taking any prescription/non-prescription medication?"
     onChange={(val) => toggle(val, 4)}
+    defaultValue="no"
+    
    >
     <Group>
      <Radio value="yes" label="Yes" />
@@ -250,6 +254,8 @@ const PageForm_2 = ({ form }) => {
       {...form.getInputProps("medication")}
       variant={"filled"}
       label="If so, please specify"
+    defaultValue="N/a"
+      
      />
     </Collapse>
    </Radio.Group>
@@ -257,6 +263,7 @@ const PageForm_2 = ({ form }) => {
    <Radio.Group
     label="Are you in medical treatment now?"
     onChange={(val) => toggle(val, 1)}
+    defaultValue="no"
    >
     <Group>
      <Radio value="yes" label="Yes" />
@@ -267,12 +274,15 @@ const PageForm_2 = ({ form }) => {
       {...form.getInputProps("current_treatment")}
       variant={"filled"}
       label="If so, what is the condition being treated?"
+      defaultValue={"N/a"}
+
      />
     </Collapse>
    </Radio.Group>
    <Radio.Group
     label="Have you ever had serious illness or surgical operation?"
-    onChange={(val) => toggle(val, 2)}
+    onChange={(val) =>{form.setFieldValue("isIllnessOrOperation", val);toggle(val, 2)}}
+    // {...form.getInputProps("isIllnessOrOperation")}
    >
     <Group>
      <Radio value="yes" label="Yes" />
@@ -280,7 +290,7 @@ const PageForm_2 = ({ form }) => {
     </Group>
     <Collapse in={openField.includes(2)} transitionDuration={600}>
      <TextInput
-      {...form.getInputProps("isIllnessOrOperation")}
+      onChange={(val) => form.setFieldValue("isIllnessOrOperation", val)}
       variant={"filled"}
       label="If so, what illness or operation?"
      />
@@ -305,7 +315,7 @@ const PageForm_2 = ({ form }) => {
       <Checkbox label="Latex" value="Latex" />
      </Stack>
      <Stack>
-      <TextInput  label="Other" />
+      <Checkbox  label="Other" {...form.getInputProps("allergies")}/>
      </Stack>
     </Group>
    </Checkbox.Group>
@@ -323,7 +333,7 @@ const PageForm_2 = ({ form }) => {
      { label: "O-", value: "O-" },
     ]}
     defaultValue={"A+"}
-    {...form.getInputProps("civil_status")}
+    {...form.getInputProps("blood_type")}
    />
    <Collapse
     title="For Women"
@@ -425,28 +435,28 @@ const PageForm_2 = ({ form }) => {
   </>
  );
 };
-const PageForm_3 = () => {
+const PageForm_3 = ({form }) => {
  return (<>
- 
+    <Title>Dentition Status</Title>
  </>);
 };
 
 const AddPatientModal = () => {
  const [page, setPage] = useState(0);
 
- const { form: patientForm} = useContext(OperationContext);
+ const { basic_form, dentition_form, medicalhistory_form} = useContext(OperationContext);
 
+  const pages = [basic_form, medicalhistory_form, dentition_form]
  const conditionalComponent = () => {
   switch (page) {
    case 0:
-    return <PageForm_1 form={patientForm} />;
+    return <PageForm_1 form={basic_form} />;
    case 1:
-    return <PageForm_2 form={patientForm} />;
+    return <PageForm_2 form={medicalhistory_form} />;
    case 2:
-    return <PageForm_3 />;
+    return <PageForm_3 form={dentition_form} />;
   }
  };
- 
  return (
   <>
     <Head>
@@ -470,8 +480,12 @@ const AddPatientModal = () => {
       {page < 2 ? (
        <Button
         onClick={() => {
-         patientForm.validate();
-         setPage(page + 1);
+         pages[page].validate();
+         console.log(page)
+         if (pages[page].validate().hasErrors){
+
+           setPage(page + 1);
+         }
         }}
        >
         Next

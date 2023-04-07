@@ -4,12 +4,15 @@ import { Patient } from '../../schema/patient';
 import { useStyles } from '.';
 import Link from 'next/link';
 import { IconDotsVertical, IconLink} from '@tabler/icons-react';
-// Crearte 
-export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", setSelection, selection}, props) =>{
+
+
+export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", selection=[],setSelection}, props) =>{
     const [scrolled, setScrolled] = useState(false);
     const [selectOpen, setSelectOpen] = useState(false);
     const [loading, setLoading] = useState(true);
+    // Data state
     
+    // Style
     const { classes, cx } = useStyles();
     const toggleSelect = (id:string)=>{
         setSelectOpen(true)
@@ -22,7 +25,7 @@ export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", set
 
     const toggleRow = (id: string) =>{
         setSelection((current) =>
-        current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
+            current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
         )};
     const toggleAll = () =>
         setSelection((current) => (current.length === data.length ? [] : data.map((item) => item.patient_id)));
@@ -33,13 +36,13 @@ export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", set
                 columns.map((column, index)=><td key={row+""+column}><Skeleton  height={8} mt={7} radius="xl"/></td>)
             }
             </tr>)})
-    const rows = data.map((row)=>{
+    const rows = data.map((row, i)=>{
         const keys = Object.keys(row)
         const selected = selection.includes(row.patient_id)
         
         return(
             
-            <tr onDoubleClick={()=>toggleSelect(row.patient_id)} onClick={()=>{if (selectOpen) toggleRow(row.patient_id)}} key={row.patient_id} className={cx({ [classes.rowSelected]: selected })}>
+            <tr key={row.patient_id +"-" +i} onDoubleClick={()=>toggleSelect(row.patient_id)} onClick={()=>{if (selectOpen) toggleRow(row.patient_id)}}  className={cx({ [classes.rowSelected]: selected })}>
                 {
                     
                     keys.map((value, index)=> {
@@ -62,11 +65,7 @@ export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", set
                             transitionDuration={0}
                             radius="xl"
                         />
-                        </td>: <></>
-                    }
-                    {
-                        selectOpen ? <></>: 
-                            <td align='center'>
+                        </td>: <td align='center'>
                                 <Menu shadow="md" width={200}>
                                     <Menu.Target>
                                     <IconDotsVertical size={15}/>
@@ -83,6 +82,7 @@ export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", set
                                 </Menu>
                             </td>
                     }
+                   
                     
             </tr>
            
@@ -110,7 +110,7 @@ export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", set
                             )
                         }
                         {
-                            selectOpen ? <th style={{width:"13%"}}><Group>
+                            selectOpen ? <th key={10} style={{width:"13%"}}><Group>
                             <Checkbox
                             onChange={toggleAll}
                             checked={selection.length === data.length}
@@ -120,7 +120,7 @@ export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", set
                             />
                             <UnstyledButton className={classes.sideButtonCheck} onClick={toggleCancelSelect}>Cancel</UnstyledButton>
                             </Group>
-                            </th>: <></>
+                            </th>: <th key={10}  style={{width:"13%"}}></th>
                         }
                     </tr>
                 </thead>
