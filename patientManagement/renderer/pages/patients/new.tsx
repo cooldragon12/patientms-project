@@ -472,6 +472,22 @@ const PageForm_3 = ({ form }) => {
   const lowerTeeth = ["48", "47", "46", "45", "44", "43", "42", "41", "31", "32", "33", "34", "35", "36", "37", "38"];
   const upperYoungTeeth = ["55", "54", "53", "52", "51", "61", "62", "63", "64", "65"];
   const lowerYoungTeeth = ["85", "84", "83", "82", "81", "71", "72", "73", "74", "75"];
+  const [teeth, setTeeth] = useState([]);
+  const status = [
+    {
+      label: "-",
+      value: ""
+    },
+    {
+    label: "M",
+    value: "missing"
+  },
+
+  {
+    label: "E",
+    value: "extracted"
+  }
+];
   const {classes} = useStyles();
  return (<>
     <Title>Dentition Status</Title>
@@ -501,8 +517,7 @@ const PageForm_3 = ({ form }) => {
               return (
                 <td key={index}>
                   <div>
-
-                  <NativeSelect key={index} data={[]}/>
+                    <NativeSelect defaultValue={""} key={index} data={status}/>
                   </div>
                 </td>
               );
@@ -516,7 +531,7 @@ const PageForm_3 = ({ form }) => {
                 <td key={index}>
                   <div>
 
-                  <NativeSelect key={index} data={[]}/>
+                  <NativeSelect defaultValue={""}  key={index} data={status}/>
                   </div>
                 </td>
               );
@@ -564,7 +579,7 @@ const PageForm_3 = ({ form }) => {
                 <td key={index}>
                   <div>
 
-                  <NativeSelect key={index} data={[]}/>
+                  <NativeSelect defaultValue={""}  key={index} data={status}/>
                   </div>
                 </td>
               );
@@ -578,7 +593,7 @@ const PageForm_3 = ({ form }) => {
                 <td key={index}>
                   <div>
 
-                  <NativeSelect key={index} data={[]}/>
+                  <NativeSelect  defaultValue={""}  key={index} data={status}/>
                   </div>
                 </td>
               );
