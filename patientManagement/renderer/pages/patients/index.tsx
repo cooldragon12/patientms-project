@@ -27,8 +27,13 @@ function Patients(props) {
     console.log(props.data)
     dispatch({type: "LOAD", payload: {data: props.data}})
   }, [props.data]);
+
   const searchHandler = (e) => {
     dispatch({ type: "SEARCH", payload: { searchQuery:e.target.value } });
+  }
+  
+  const sorthandler = (id:keyof PatientOverview) => {
+    dispatch({ type: "SORT", payload: { key:id } });
   }
   return (
     <React.Fragment>
@@ -116,6 +121,9 @@ function Patients(props) {
             selection={selection}
             columns={["ID", "Last Name", "First Name", "Sex", "Last Visit"]}
             data={state.filteredData}
+            sortHandler={sorthandler}
+            ascending={state.ascending}
+            sortBy={state.sortBy}
             empty_message="No Patient"
           />
         </Box>
@@ -123,22 +131,24 @@ function Patients(props) {
   );
 }
 export async function getStaticProps(context) {
-  const data = [
+  const data:PatientOverview[] = [
     {
       id: "1",
       last_name: "Encabo",
       first_name: "Johndel",
       sex: "M",
-      last_visit: "2021-05-01",
+      last_visit: "2021-01-01",
       patient_url: "/patients/1",
+      patient_api_url: "/patients/1",
     },
     {
       id: "2",
       last_name: "Encabo",
-      first_name: "Johndel",
+      first_name: "Lohndel",
       sex: "M",
       last_visit: "2021-05-01",
       patient_url: "/patients/2",
+      patient_api_url: "/patients/2",
     },
     {
       id: "3",
@@ -147,22 +157,25 @@ export async function getStaticProps(context) {
       sex: "M",
       last_visit: "2021-08-01",
       patient_url: "/patients/3",
+      patient_api_url: "/patients/3",
     },
     {
-      id: "4",
+      id: "100",
       last_name: "Encabo",
-      first_name: "Johndel",
+      first_name: "Dohndel",
       sex: "M",
       last_visit: "2021-09-01",
       patient_url: "/patients/4",
+      patient_api_url: "/patients/4",
     },
     {
-      id: "5",
+      id: "9",
       last_name: "Encabo",
       first_name: "Johndel",
       sex: "M",
       last_visit: "2021-01-01",
       patient_url: "/patients/5",
+      patient_api_url: "/patients/5",
     },
   ];
   return {

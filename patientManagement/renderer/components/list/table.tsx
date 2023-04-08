@@ -9,6 +9,8 @@ export const useStyles = createStyles((theme) => ({
         position: 'sticky',
         top: 0,
         backgroundColor: theme.colors.mint_green[0],
+        borderRadius: theme.radius.md,
+        
         
 
         transition: 'box-shadow 150ms ease',
@@ -26,9 +28,12 @@ export const useStyles = createStyles((theme) => ({
     },
 
     table:{
-        borderRadius: theme.radius.md,
+        borderRadius: theme.radius.lg,
         // borderColor: theme.colors.mint_green[3]
+       
         "tbody":{
+            borderRadius: theme.radius.md,
+
             "tr":{
                 ":hover":{
                     backgroundColor: theme.colors.gray[0],

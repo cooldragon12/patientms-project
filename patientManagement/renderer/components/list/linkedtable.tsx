@@ -1,12 +1,31 @@
 import React, {useEffect, useState} from 'react';
-import { Table, ScrollArea, createStyles,Menu, Checkbox, Button, UnstyledButton, Group, Skeleton } from '@mantine/core';
+import { Table, ScrollArea, createStyles,Menu, Checkbox, Button, UnstyledButton, Group, Skeleton, Text, Center } from '@mantine/core';
 import { Patient } from '../../schema/patient';
 import { useStyles } from '.';
 import Link from 'next/link';
-import { IconDotsVertical, IconLink} from '@tabler/icons-react';
+import { IconChevronDown, IconChevronUp, IconDotsVertical, IconLink, IconSelector} from '@tabler/icons-react';
 
-
-export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", selection=[],setSelection}, props) =>{
+function Th({ children, sorted, onSort, index, loading }) {
+    const Icon = sorted ?   IconChevronDown:IconChevronUp;
+    return (
+      <th key={index}>
+        <UnstyledButton onClick={onSort} >
+            <Skeleton visible={loading} radius="md">
+                                    
+                <Group position="apart">
+                    <Text fw={500} fz="sm">
+                    {children}
+                    </Text>
+                    <Center>
+                        <Icon size="0.9rem" stroke={1.5} />
+                    </Center>
+                </Group>
+            </Skeleton >
+        </UnstyledButton>
+      </th>
+    );
+  }
+export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", selection=[],setSelection, sortHandler, ascending,sortBy}, props) =>{
     const [scrolled, setScrolled] = useState(false);
     const [selectOpen, setSelectOpen] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -92,6 +111,8 @@ export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", sel
     useEffect(()=>{
         
         setTimeout(()=>setLoading(false), 500);
+        return ()=>{setTimeout(()=>setLoading(true), 500)}
+        
         // setLoading(false);
     }, [data])
     return (
@@ -102,11 +123,9 @@ export const LinkedSelectionTable = ({columns=[], data=[], empty_message="", sel
                         
                         {
                             columns.map((column, index)=>
-                            <th key={column+ " " +index}>
-                                <Skeleton visible={loading} radius="md">
+                                <Th sorted={ascending ?? sortBy} index={column +"-"+index} loading={loading} onSort={()=>sortHandler(column)}>
                                     {column}
-                                </Skeleton >
-                            </th>
+                                </Th>
                             )
                         }
                         {

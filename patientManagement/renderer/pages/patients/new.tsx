@@ -13,7 +13,10 @@ import {
  Checkbox,
  Container,
  Modal,
- Stack
+ Stack,
+ Table,
+ NativeSelect,
+ createStyles
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm, UseFormReturnType, } from "@mantine/form";
@@ -23,6 +26,28 @@ import { useState, useContext,useEffect } from "react";
 
 import { OperationContext } from "../../@context/operation";
 import { PatientFullInformation } from "../../schema/patient";
+import { useDidUpdate } from "@mantine/hooks";
+
+
+const useStyles = createStyles((theme) => ({
+  table:{
+    borderRadius: theme.radius.md,
+    // "thead":{
+      "tbody":{
+        borderRadius: theme.radius.md,
+          "td":{
+            "div":{
+              display:"flex",
+              justifyContent:"center",
+              alignContent:"center",
+
+            }
+          }
+        },
+        
+    }
+  }
+))
 
 const PageForm_1 = ({form}) => {
 //  const [age, setAge] = useState<number>(0);
@@ -194,12 +219,9 @@ const PageForm_1 = ({form}) => {
  );
 };
 const PageForm_2 = ({ form }) => {
- const [openField, setOpenField] = useState([]);
- const toggle = (val, id) => {
-  val
-   ? setOpenField((field) => [...field, id])
-   : setOpenField((field) => field.filter((item) => item !== id));
- };
+  useEffect(()=>{
+    console.log(form.values);
+  },  [form.values]);
  return (
   <>
    <Title>Patient History</Title>
@@ -224,37 +246,37 @@ const PageForm_2 = ({ form }) => {
    
    <Radio.Group
     label="Have you ever hospitalization?"
-    onChange={(val) => toggle(val, 3)}
+
     {...form.getInputProps("hospitalization")}
    >
     <Group>
      <Radio value="yes" label="Yes" />
      <Radio value="no" label="No"  />
     </Group>
-    <Collapse in={openField.includes(3)} transitionDuration={600}>
+    <Collapse in={form.values.hospitalization === "yes"} transitionDuration={600}>
      <TextInput
       variant={"filled"}
       label="If so, when and why?"
-      {...form.getInputProps("hospitalization")}
+      {...form.getInputProps("hospitalization_details")}
      />
     </Collapse>
    </Radio.Group>
    <Radio.Group
     label="Are you taking any prescription/non-prescription medication?"
-    onChange={(val) => toggle(val, 4)}
-    defaultValue="no"
+
+    {...form.getInputProps("medication")}
     
    >
     <Group>
      <Radio value="yes" label="Yes" />
      <Radio value="no" label="No" />
     </Group>
-    <Collapse in={openField.includes(4)} transitionDuration={600}>
+    <Collapse in={form.values.medication === "yes"} transitionDuration={600}>
      <TextInput
-      {...form.getInputProps("medication")}
+      {...form.getInputProps("medication_details")}
       variant={"filled"}
       label="If so, please specify"
-    defaultValue="N/a"
+    
       
      />
     </Collapse>
@@ -262,16 +284,16 @@ const PageForm_2 = ({ form }) => {
 
    <Radio.Group
     label="Are you in medical treatment now?"
-    onChange={(val) => toggle(val, 1)}
-    defaultValue="no"
+    {...form.getInputProps("current_treatment")}
+
    >
     <Group>
      <Radio value="yes" label="Yes" />
      <Radio value="no" label="No" />
     </Group>
-    <Collapse in={openField.includes(1)} transitionDuration={600}>
+    <Collapse in={form.values.current_treatment === "yes"} transitionDuration={600}>
      <TextInput
-      {...form.getInputProps("current_treatment")}
+      {...form.getInputProps("current_treatment_details")}
       variant={"filled"}
       label="If so, what is the condition being treated?"
       defaultValue={"N/a"}
@@ -281,18 +303,20 @@ const PageForm_2 = ({ form }) => {
    </Radio.Group>
    <Radio.Group
     label="Have you ever had serious illness or surgical operation?"
-    onChange={(val) =>{form.setFieldValue("isIllnessOrOperation", val);toggle(val, 2)}}
-    // {...form.getInputProps("isIllnessOrOperation")}
+    
+    {...form.getInputProps("isIllnessOrOperation")}
    >
     <Group>
      <Radio value="yes" label="Yes" />
      <Radio value="no" label="No" />
     </Group>
-    <Collapse in={openField.includes(2)} transitionDuration={600}>
+    <Collapse in={form.values.isIllnessOrOperation === "yes"} transitionDuration={600}>
      <TextInput
-      onChange={(val) => form.setFieldValue("isIllnessOrOperation", val)}
+      
       variant={"filled"}
       label="If so, what illness or operation?"
+      {...form.getInputProps("isIllnessOrOperation_details")}
+
      />
     </Collapse>
    </Radio.Group>
@@ -306,6 +330,7 @@ const PageForm_2 = ({ form }) => {
       <Checkbox
        label="Local Anesthetic (ex. Lidocaine)"
        value="Local Anesthetic"
+       
       />
       <Checkbox label="Sulfa drugs" value="Sulfa drugs" />
       <Checkbox label="Penicillin, Antibiotics" value="Penicillin" />
@@ -315,7 +340,10 @@ const PageForm_2 = ({ form }) => {
       <Checkbox label="Latex" value="Latex" />
      </Stack>
      <Stack>
-      <Checkbox  label="Other" {...form.getInputProps("allergies")}/>
+      <Checkbox  label="Other" value="Other" />
+      <Collapse in={form.values.allergies.includes("Other")} transitionDuration={600}>
+        <TextInput disabled={!form.values.allergies.includes("Other")} {...form.getInputProps("other_allergy")} />
+      </Collapse>
      </Stack>
     </Group>
    </Checkbox.Group>
@@ -356,14 +384,15 @@ const PageForm_2 = ({ form }) => {
    </Collapse>
    <Radio.Group
     label="Do you have or you had any conditions?"
-    onChange={(val) => toggle(val, 5)}
+    {...form.getInputProps("hasCondition")}
    >
     <Group>
      <Radio value="yes" label="Yes" />
      <Radio value="no" label="No" />
     </Group>
-    <Collapse in={openField.includes(5)} transitionDuration={600}>
+    <Collapse in={form.values.hasCondition === "yes"} transitionDuration={600}>
      <Checkbox.Group
+
       label="If so, please check"
       {...form.getInputProps("conditions")}
      >
@@ -426,7 +455,10 @@ const PageForm_2 = ({ form }) => {
          label="Arthritis / Rheumatism"
          value="Arthritis / Rheumatism"
         />
-        <Checkbox label="Other" value="Other" />
+        <Checkbox  label="Other" value="Other" />
+        <Collapse in={form.values.conditions.includes("Other")} transitionDuration={600}>
+        <TextInput disabled={!form.values.conditions.includes("Other")} {...form.getInputProps("other_condition")} />
+        </Collapse>
        </Stack>
       </Group>
      </Checkbox.Group>
@@ -435,17 +467,150 @@ const PageForm_2 = ({ form }) => {
   </>
  );
 };
-const PageForm_3 = ({form }) => {
+const PageForm_3 = ({ form }) => {
+  const upperTeeth = ["18", "17", "16", "15", "14", "13", "12", "11", "21", "22", "23", "24", "25", "26", "27", "28"];
+  const lowerTeeth = ["48", "47", "46", "45", "44", "43", "42", "41", "31", "32", "33", "34", "35", "36", "37", "38"];
+  const upperYoungTeeth = ["55", "54", "53", "52", "51", "61", "62", "63", "64", "65"];
+  const lowerYoungTeeth = ["85", "84", "83", "82", "81", "71", "72", "73", "74", "75"];
+  const {classes} = useStyles();
  return (<>
     <Title>Dentition Status</Title>
+    <Stack>
+      <Text>Teeth Statuses</Text>
+            <Title size={20}>Adult Teeth</Title>
+      <Table withBorder={true}  withColumnBorders={true}  className={classes.table}>
+   
+        <tbody>
+          <tr >
+          {
+            upperTeeth.map((tooth, index) => {
+              return (
+                <td key={index}>
+                  <div>
+
+                  {tooth}
+                  </div>
+                </td>
+              );
+            })
+          }
+          </tr>
+          <tr >
+          {
+            upperTeeth.map((tooth, index) => {
+              return (
+                <td key={index}>
+                  <div>
+
+                  <NativeSelect key={index} data={[]}/>
+                  </div>
+                </td>
+              );
+            })
+          }
+          </tr>
+          <tr >
+          {
+            lowerTeeth.map((tooth, index) => {
+              return (
+                <td key={index}>
+                  <div>
+
+                  <NativeSelect key={index} data={[]}/>
+                  </div>
+                </td>
+              );
+            })
+          }
+          </tr>
+          <tr >
+          {
+            lowerTeeth.map((tooth, index) => {
+              return (
+                <td key={index}>
+                  <div>
+
+                  {tooth}
+                  </div>
+                </td>
+              );
+            })
+          }
+          </tr>
+        </tbody>
+      </Table>
+            <Title size={20}>Young Teeth</Title>
+      <Table withBorder={true} withColumnBorders={true} className={classes.table}>
+        
+        <tbody>
+          <tr >
+          {
+            upperYoungTeeth.map((tooth, index) => {
+              return (
+                <td key={index}>
+                  <div>
+
+                  {tooth}
+                  </div>
+                </td>
+              );
+            })
+          }
+          </tr>
+          <tr >
+          {
+            upperYoungTeeth.map((tooth, index) => {
+              return (
+                <td key={index}>
+                  <div>
+
+                  <NativeSelect key={index} data={[]}/>
+                  </div>
+                </td>
+              );
+            })
+          }
+          </tr>
+          <tr >
+          {
+            lowerYoungTeeth.map((tooth, index) => {
+              return (
+                <td key={index}>
+                  <div>
+
+                  <NativeSelect key={index} data={[]}/>
+                  </div>
+                </td>
+              );
+            })
+          }
+          </tr>
+          <tr >
+          {
+            lowerYoungTeeth.map((tooth, index) => {
+              return (
+                <td key={index}>
+                  <div>
+
+                  {tooth}
+                  </div>
+                </td>
+              );
+            })
+          }
+          </tr>
+        </tbody>
+      </Table>
+      
+    </Stack>
  </>);
 };
 
 const AddPatientModal = () => {
- const [page, setPage] = useState(0);
+  const [page, setPage] = useState(0);
 
- const { basic_form, dentition_form, medicalhistory_form} = useContext(OperationContext);
-
+  const { basic_form, dentition_form, medicalhistory_form} = useContext(OperationContext);
+  
   const pages = [basic_form, medicalhistory_form, dentition_form]
  const conditionalComponent = () => {
   switch (page) {
@@ -457,12 +622,15 @@ const AddPatientModal = () => {
     return <PageForm_3 form={dentition_form} />;
   }
  };
+ useDidUpdate(() => {
+
+ }, [page])
  return (
   <>
     <Head>
       <title>Add New Patient</title>
     </Head>
-   <form>
+   <form >
     <Stack
      sx={(theme) => ({
       paddingLeft: theme.spacing.xl,
@@ -479,14 +647,9 @@ const AddPatientModal = () => {
       )}
       {page < 2 ? (
        <Button
-        onClick={() => {
-         pages[page].validate();
-         console.log(page)
-         if (pages[page].validate().hasErrors){
-
-           setPage(page + 1);
-         }
-        }}
+        // disabled={!basic_form.isValid()}
+        
+        onClick={() => setPage(page + 1)}
        >
         Next
        </Button>

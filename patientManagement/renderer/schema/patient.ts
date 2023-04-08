@@ -133,7 +133,7 @@ Patient,
 | "email"
 | "occupation"
 | "reason"
-| "religieon"
+| "religion"
 >;
 export type PatientFullInformation = zod.infer<typeof PatientFullInformation>;
 export type PatientBasicInformation = zod.infer<typeof PatientBasicInformation>;
@@ -142,7 +142,7 @@ export type PatientMedicalHistory = zod.infer<typeof PatientMedicalHistory>;
  * `PatientOverview` is the interface of the table of patient as the overview.
  */
 export interface PatientOverview extends PatientPrimary, PatientUrl {
-  readonly last_visit: Date;
+  readonly last_visit: string;
 }
 /**
  * `PatientUrl` is the interface of the patient url

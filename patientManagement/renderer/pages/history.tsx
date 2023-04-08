@@ -1,4 +1,4 @@
-import React, {useState, useReducer} from 'react';
+import React, {useState, useReducer, useEffect} from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 
@@ -52,6 +52,11 @@ function ClinicHistory(props) {
   const { classes, cx } = useLayoutStyle();
   const [section, setSection] = useState<'today' | 'yesterday' | 'this_week' | 'this_month'>('today');
   const [state, dispatch] = useReducer(reducer, initialState);
+  
+  useEffect(()=>{
+    dispatch({type:"LOAD", payload:{data:props.data}})
+  },[props.data])
+
   return (
     <React.Fragment>
       <Head>
