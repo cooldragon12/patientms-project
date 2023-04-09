@@ -1,10 +1,7 @@
 import zod from "zod";
 
 // Schema of Patient
-export const ToothCondition = zod.object({
-  tooth_no: zod.string().nullable(),
-  condition: zod.string().nullable(),
-});
+
 /**
  * `Patient` is the schema of the patient basic details
  */
@@ -77,7 +74,7 @@ export const PatientDentition = zod.object({
   periodontal_screening: zod.string().nullable(),
   occlusion: zod.string().nullable(),
   tmd: zod.string().nullable(),
-  teeth: zod.array(ToothCondition).default([]),
+  teeth: zod.object({})
 });
 /**
  * Additional information for the patient who is woman

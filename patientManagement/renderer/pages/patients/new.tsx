@@ -6,7 +6,7 @@ import {
  Radio,
  Collapse,
  TextInput,
- Select,
+
  Title,
  Button,
  Text,
@@ -15,19 +15,23 @@ import {
  Modal,
  Stack,
  Table,
- NativeSelect,
- createStyles
+ Select,
+ createStyles,
+ HoverCard,
+ Tooltip,
+ Box,
+ ScrollArea
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm, UseFormReturnType, } from "@mantine/form";
 import Head from "next/head";
 
-import { useState, useContext,useEffect } from "react";
+import { useState, useContext,useEffect, forwardRef } from "react";
 
 import { OperationContext } from "../../@context/operation";
-import { PatientFullInformation } from "../../schema/patient";
+import { PatientDentition, PatientFullInformation } from "../../schema/patient";
 import { useDidUpdate } from "@mantine/hooks";
-
+import { upperTeeth, lowerTeeth, lowerYoungTeeth, upperYoungTeeth } from "../../components/TeethList";
 
 const useStyles = createStyles((theme) => ({
   table:{
@@ -467,33 +471,97 @@ const PageForm_2 = ({ form }) => {
   </>
  );
 };
-const PageForm_3 = ({ form }) => {
-  const upperTeeth = ["18", "17", "16", "15", "14", "13", "12", "11", "21", "22", "23", "24", "25", "26", "27", "28"];
-  const lowerTeeth = ["48", "47", "46", "45", "44", "43", "42", "41", "31", "32", "33", "34", "35", "36", "37", "38"];
-  const upperYoungTeeth = ["55", "54", "53", "52", "51", "61", "62", "63", "64", "65"];
-  const lowerYoungTeeth = ["85", "84", "83", "82", "81", "71", "72", "73", "74", "75"];
-  const [teeth, setTeeth] = useState([]);
-  const status = [
-    {
-      label: "-",
-      value: ""
-    },
-    {
-    label: "M",
-    value: "missing"
-  },
+interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {
+  value: string;
+  label: string;
+  label1: string;
+}
 
-  {
-    label: "E",
-    value: "extracted"
-  }
+const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
+  ({label,label1, value,...others }: ItemProps, ref) => (
+    <Tooltip label={value + "-" + label1}>
+
+      <Box sx={(theme)=>({
+                width: "200px",
+              })} ref={ref} {...others}>
+            <Group noWrap>
+
+              <Box >
+                <Text size="sm">{value}</Text>
+              </Box>
+            </Group>
+          
+      </Box>
+    </Tooltip>
+  )
+);
+
+const PageForm_3 = ({ form }) => {
+  
+  // const [teeth, setTeeth] = useState<{tooth_no:string, condition?:string}[]>([]);
+  const status = [
+    {value:"D", label:"D",label1:"Decayed"},// 1
+    {value:"M", label:"M",label1:"Missing"},// 2
+    {label: "F",value:"F", label1:"Filled"},// 3
+    {label: "I",value:"I", label1:"Caries Indicated for Extraction"},// 4
+    {label: "RF",value:"RF",label1: "Root Fragment"}, //5
+    {label: "MO",value:"MO", label1:"Missing due to Other Cause"},// 6
+    {label: "Im",value:"Im",label1: "Impacted Tooth"}, // 7
+    {label: "J",value:"J", label1:"Jacket Crown"},// 8
+    {label: "A",value:"A", label1:"Amalgam Filling"},//9
+    {label: "AB",value:"AB",label1: "Abutment"},//10
+    {label: "P",value:"P", label1:"Pontic"},//11
+    {label: "In",value:"In",label1: "Inlay"},//12
+    {label: "Fx",value:"Fx",label1: "Fixed Cure Composite"},//13
+    {label: "S",value:"S", label1:"Sealants"},//14
+    {label: "Rm",value:"Rm",label1: "Removable Denture"},//15
+    {label: "X",value:"X", label1:"Extraction due to Caries"},//16
+    {label: "XO",value:"XO",label1: "Extraction due to Other Cause"},//17
+    {label: "Cm",value:"Cm",label1: "Cingenitally Missing"},//18
+    {label: "Sp",value:"Sp",label1: "Supernumerary"},//19
+   
 ];
   const {classes} = useStyles();
- return (<>
+
+  const onChangeHandler = (value, name) => {
+    form.setValues((val)=>val.teeth[name].condition = value);
+  };
+  useEffect(() => {console.log(form.values.teeth)}, [form.values.teeth])
+ return (
+ <>
     <Title>Dentition Status</Title>
     <Stack>
+      <Group position="apart">
       <Text>Teeth Statuses</Text>
-            <Title size={20}>Adult Teeth</Title>
+        <Group sx={(theme)=>({
+          padding: "1rem",
+          backgroundColor: theme.colors.mint_green[3],
+          borderRadius: "0.5rem",
+          color: theme.colors.gray[0],
+          
+        })}>
+          <Box>
+            {
+              status.slice(0, (status.length/2)).map((item, index) => {
+                return (
+                  <Text key={index}><b>{item.label}</b> - {item.label1}</Text>
+                )
+              })
+            }
+          </Box>
+          <Box>
+            {
+              status.slice(status.length/2, status.length).map((item, index) => {
+                return (
+                  <Text  key={index}><b>{item.label}</b> - {item.label1}</Text>
+                )
+              })
+            }
+          </Box>
+        </Group>
+      </Group>
+      
+      <Title size={20}>Adult Teeth</Title>
       <Table withBorder={true}  withColumnBorders={true}  className={classes.table}>
    
         <tbody>
@@ -503,7 +571,6 @@ const PageForm_3 = ({ form }) => {
               return (
                 <td key={index}>
                   <div>
-
                   {tooth}
                   </div>
                 </td>
@@ -517,7 +584,7 @@ const PageForm_3 = ({ form }) => {
               return (
                 <td key={index}>
                   <div>
-                    <NativeSelect defaultValue={""} key={index} data={status}/>
+                    <Select defaultValue={""} value={form.values.teeth[tooth].condition} name={tooth} key={index} onChange={(e)=>onChangeHandler(e, tooth)}  data={status}/>
                   </div>
                 </td>
               );
@@ -531,7 +598,7 @@ const PageForm_3 = ({ form }) => {
                 <td key={index}>
                   <div>
 
-                  <NativeSelect defaultValue={""}  key={index} data={status}/>
+                  <Select defaultValue={""}  name={tooth} value={form.values.teeth[tooth].condition}  key={index} onChange={(e)=>onChangeHandler(e, tooth)} data={status}/>
                   </div>
                 </td>
               );
@@ -579,7 +646,7 @@ const PageForm_3 = ({ form }) => {
                 <td key={index}>
                   <div>
 
-                  <NativeSelect defaultValue={""}  key={index} data={status}/>
+                  <Select defaultValue={""}  name={tooth} value={form.values.teeth[tooth].condition}  key={index} onChange={(e)=>onChangeHandler(e, tooth)}  data={status}/>
                   </div>
                 </td>
               );
@@ -593,7 +660,7 @@ const PageForm_3 = ({ form }) => {
                 <td key={index}>
                   <div>
 
-                  <NativeSelect  defaultValue={""}  key={index} data={status}/>
+                  <Select  defaultValue={""}  name={tooth} value={form.values.teeth[tooth].condition}  key={index} onChange={(e)=>onChangeHandler(e, tooth)}  data={status}/>
                   </div>
                 </td>
               );
@@ -616,6 +683,7 @@ const PageForm_3 = ({ form }) => {
           </tr>
         </tbody>
       </Table>
+     
       
     </Stack>
  </>);

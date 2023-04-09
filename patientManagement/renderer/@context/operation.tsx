@@ -10,6 +10,7 @@ import {
  Patients,
 } from "../schema/patient";
 import { notifications } from "@mantine/notifications";
+import { teethList } from "../components/TeethList";
 // import { DELETE, POST } from '../server/request';
 
 interface OperationContextType {
@@ -18,7 +19,7 @@ interface OperationContextType {
  deletePatient: (id: string) => void;
  basic_form: UseFormReturnType<PatientBasicInformation>;
  medicalhistory_form: UseFormReturnType<PatientMedicalHistory | any>;
- dentition_form: UseFormReturnType<PatientDentition>;
+ dentition_form: UseFormReturnType<PatientDentition | any>;
 
  anchor: { href: string; label: string }[];
  setAnchor: Dispatch<SetStateAction<{ href: string; label: string }[]>>;
@@ -50,7 +51,7 @@ export const OperationProvider = ({
 }) => {
  const tempData1 = {};
  const tempData2 = {};
-
+  const tempData3 = {};
  const [anchor, setAnchor] = useState([{ href: "/", label: "Home" }]);
  // const [opened, { open, close }] = useDisclosure(false);
  const basic_form = useForm({
@@ -126,9 +127,10 @@ export const OperationProvider = ({
     }
   }
  });
- const dentition_form = useForm<PatientDentition>({
-  // initialValues: tempData as PatientDentition,
-  validate: { ...zodResolver(PatientDentition) },
+ const dentition_form = useForm({
+  initialValues: {...tempData3 as PatientDentition, teeth: Object.assign({}, ...teethList.map((item) => ({[item]:{tooth_no: item, condition: ""}})))},
+
+  validate: {...zodResolver(PatientDentition)},
   validateInputOnBlur: true,
   validateInputOnChange: true,
   clearInputErrorOnChange: true,
@@ -174,6 +176,7 @@ export const OperationProvider = ({
   //     })
   // })
  };
+
  return (
   <OperationContext.Provider
    value={{
