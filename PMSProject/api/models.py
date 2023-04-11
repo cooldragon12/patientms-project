@@ -37,7 +37,7 @@ class Patient(models.Model):
         return TreatmentRecord.objects.latest('date').date
     
     def patient_url(self):
-        return "/patient/" + str(self.id) + "/"
+        return "/patient/" + str(self.pk) + "/"
 
 class PatientMinor(models.Model):
     patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="minor_info")
