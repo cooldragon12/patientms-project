@@ -127,10 +127,10 @@ class Dentition(models.Model):
         MUSCLESPASM = "muscle spasm ", "MUSCLE SPASM"
     # Why there is no choices for screening and appliances?
     patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_dentition")
-    periodontal_screening=MultiSelectField(max_length=100,choices=PeriodontalChoices.choices)
-    occlusion=MultiSelectField( max_length=100,choices=OcclusionChoices.choices)
-    appliances=MultiSelectField(max_length=100, choices=AppliancesChoices.choices)
-    tmd=MultiSelectField( max_length=100,choices=TMDChoices.choices)
+    periodontal_screening=MultiSelectField(max_length=100,choices=PeriodontalChoices.choices, null=True, blank=True)
+    occlusion=MultiSelectField( max_length=100,choices=OcclusionChoices.choices,null=True, blank=True)
+    appliances=MultiSelectField(max_length=100, choices=AppliancesChoices.choices,null=True, blank=True)
+    tmd=MultiSelectField( max_length=100,choices=TMDChoices.choices,null=True, blank=True)
 
 class ToothStatus(models.Model):
     """Tooth Status or Condition for Dentition Status and Treatment Needs Record"""
@@ -157,6 +157,6 @@ class ToothStatus(models.Model):
         # Others
         Cm = "Cm", "Cingenitally Missing"
         Sp = "Sp", "Supernumerary"
-    patient_id=models.ForeignKey(Dentition,on_delete=models.CASCADE, related_name="tooth_status")
+    patient_id=models.ForeignKey(Dentition,on_delete=models.CASCADE, related_name="teeth_status")
     tooth_no=models.PositiveBigIntegerField()
     conditions=models.CharField(max_length=50, null=True, blank=True, choices=Conditions.choices, default="")
