@@ -28,7 +28,7 @@ class DentitionSerializer(serializers.ModelSerializer):
     teeth_status = ToothStatusSerializer(many=True)
     class Meta:
         model = Dentition
-        fields = ['patientId', 'teeth_status','occulusion','appliances','rmd']
+        fields = "__all__"
 # ===========================================================
 class PatientWomanSerializer(serializers.ModelSerializer):
     class Meta:
