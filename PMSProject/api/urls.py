@@ -7,7 +7,7 @@ router.register(r'patients', PatientViewSet, basename="patients")
 # patient/
 router.register(r'patient-minor', PatientMinorViewSet)
 router.register(r'patient-woman', PatientWomanViewSet)
-router.register(r'patient-info', PatientInformationViewSet)
+router.register(r'medical-history', MedicalHistoryViewSet)
 router.register(r'treatment', TreatmentRecordViewSet)
 router.register(r'address', AddressViewSet)
 router.register(r'procedure', ProcedureViewSet)

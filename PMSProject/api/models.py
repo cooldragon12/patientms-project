@@ -38,18 +38,13 @@ class Patient(models.Model):
     
     def patient_url(self):
         return "/patient/" + str(self.id) + "/"
-class PatientWoman(models.Model):
-    patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_woman_info")
-    pregnancy=models.BooleanField(default=False)
-    nursing=models.BooleanField(default=False)
-    birth_control=models.BooleanField(default=False)
 
 class PatientMinor(models.Model):
-    patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_minor_info")
+    patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="minor_info")
     guardian_name=models.CharField(max_length=150)
     occupation_guardian=models.CharField(max_length=50, null=True, blank=True)
 
-class PatientInformation(models.Model):
+class MedicalHistory(models.Model):
     
 
     
@@ -64,7 +59,7 @@ class PatientInformation(models.Model):
         AB2="ab-","AB-"
         UNKNOWN="unknown","Unknown"
 
-    patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_full_info")
+    patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="medical_history")
     goodhealth=models.BooleanField(default=False)
     current_treatment=models.CharField(max_length=255,null=True, blank=True)
     isIllnessOrOperation=models.CharField(max_length=255, null=True, blank=True) 
@@ -76,6 +71,11 @@ class PatientInformation(models.Model):
     bloodtype=models.CharField(max_length=50,default=BloodtypeChoices.UNKNOWN,choices=BloodtypeChoices.choices)
     condition=models.CharField(max_length=100, null=True, blank=True)
 
+class PatientWoman(models.Model):
+    patient_id=models.OneToOneField(MedicalHistory,on_delete=models.CASCADE, primary_key=True, related_name="woman_info")
+    pregnancy=models.BooleanField(default=False)
+    nursing=models.BooleanField(default=False)
+    birth_control=models.BooleanField(default=False)
     # def 
 class TreatmentRecord (models.Model):
     patient_id=models.ForeignKey(Patient,on_delete=models.CASCADE, related_name="patient_treatments")
@@ -157,6 +157,6 @@ class ToothStatus(models.Model):
         # Others
         Cm = "Cm", "Cingenitally Missing"
         Sp = "Sp", "Supernumerary"
-    patient_id=models.ForeignKey(Dentition,on_delete=models.CASCADE, related_name="patient_tooth_status")
+    patient_id=models.ForeignKey(Dentition,on_delete=models.CASCADE, related_name="tooth_status")
     tooth_no=models.PositiveBigIntegerField()
     conditions=models.CharField(max_length=50, null=True, blank=True, choices=Conditions.choices, default="")

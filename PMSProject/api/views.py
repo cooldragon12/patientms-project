@@ -12,7 +12,7 @@ class PatientViewSet(viewsets.ModelViewSet):
     queryset = Patient.objects.all()
     serializer_class = PatientSerialzer
     lookup_field = "pk"
-    
+# 
 class PatientWomanViewSet(viewsets.ModelViewSet):
     queryset = PatientWoman.objects.all()
     serializer_class = PatientWomanSerializer
@@ -22,9 +22,10 @@ class PatientMinorViewSet(viewsets.ModelViewSet):
     queryset = PatientMinor.objects.all()
     serializer_class = PatientMinorSerializer
     lookup_field = "pk"
-class PatientInformationViewSet(viewsets.ModelViewSet):
-    queryset = PatientInformation.objects.all()
-    serializer_class = PatientInformationSerializer
+
+class MedicalHistoryViewSet(viewsets.ModelViewSet):
+    queryset = MedicalHistory.objects.all()
+    serializer_class = MedicalHistorySerializer
     lookup_field = "pk"
 
 class TreatmentRecordViewSet(viewsets.ModelViewSet):

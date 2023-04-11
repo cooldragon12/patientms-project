@@ -25,27 +25,28 @@ class ToothStatusSerializer(serializers.ModelSerializer):
         fields = "__all__"
 class DentitionSerializer(serializers.ModelSerializer):
     # TODO: Add Edit and Delete for the Teeth Status connected to the Dentition
-    teeth_status = ToothStatusSerializer('tooth_condition',many=True)
+    teeth_status = ToothStatusSerializer(many=True)
     class Meta:
         model = Dentition
         fields = ['patientId', 'teeth_status','occulusion','appliances','rmd']
 # ===========================================================
-class PatientInformationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PatientInformation
-        fields = "__all__"
 class PatientWomanSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientWoman
+        fields = "__all__"
+class MedicalHistorySerializer(serializers.ModelSerializer):
+    woman_info = PatientWomanSerializer()
+    class Meta:
+        model = MedicalHistory
         fields = "__all__"
 class PatientMinorSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientMinor
         fields = "__all__"
 class PatientSerialzer (serializers.HyperlinkedModelSerializer):
-    address = AddressSerializer(read_only=True)
-    patient_treatments = serializers.HyperlinkedRelatedField(view_name='treatmentrecord-detail', many=True, read_only=True,allow_null=True)
-    patient_full_info = serializers.HyperlinkedRelatedField(view_name='patientinformation-detail', read_only=True, lookup_field='pk', allow_null=True)
+    address = AddressSerializer()
+    minor_info = PatientMinorSerializer()
+    medical_history = serializers.HyperlinkedRelatedField(view_name='medicalhistory-detail', read_only=True, lookup_field='pk', allow_null=True)
     patient_dentition = serializers.HyperlinkedRelatedField(view_name='dentition-detail', read_only=True, lookup_field='pk', allow_null=True)
     patient_treatments = serializers.HyperlinkedRelatedField(view_name='treatmentrecord-detail', many=True, lookup_field='pk',read_only=True,allow_null=True)
     class Meta:
@@ -63,8 +64,26 @@ class PatientSerialzer (serializers.HyperlinkedModelSerializer):
             'email','address',
             'occupation','reason',
             'patient_treatments',
-            'patient_full_info', 
-            'patient_dentition']
+            'medical_history', 
+            'patient_dentition',
+            'minor_info']
+    def update(self, instance, validated_data):
+        if validated_data.get('address') is not None:
+            address_data = validated_data.pop('address')
+            address_instance= instance.pop('address')
+            for key, value in address_data.items():
+                setattr(address_instance, key, value)
+            address_instance.save()
+        if validated_data.get('minor_info') is not None:
+            minor_data = validated_data.pop('minor_info')
+            minor_instance= instance.pop('minor_info')
+            for key, value in minor_data.items():
+                setattr(minor_instance, key, value)
+            minor_instance.save()
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+        return instance
 # =========================================================    
 class PatientOverviewSerializer(serializers.HyperlinkedModelSerializer):
     patient_api_url = serializers.HyperlinkedIdentityField(view_name='patients-detail', lookup_field='pk')

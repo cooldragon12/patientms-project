@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-&)t@brb#vy2^r+4xa4lpblxuuvwz(a@%d6g8j_**a)e*jf8v4y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost","cooldragon12-ubiquitous-space-eureka-g57r6wgj4p5fpwg9-8000.preview.app.github.dev"]
+ALLOWED_HOSTS = ["localhost","127.0.0.1","cooldragon12-ubiquitous-space-eureka-g57r6wgj4p5fpwg9-8000.preview.app.github.dev"]
 CSRF_TRUSTED_ORIGINS = ["http://localhost","https://cooldragon12-ubiquitous-space-eureka-g57r6wgj4p5fpwg9-8000.preview.app.github.dev"]
 
 # Application definition
