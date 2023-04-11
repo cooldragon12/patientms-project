@@ -70,13 +70,13 @@ class PatientSerialzer (serializers.HyperlinkedModelSerializer):
     def update(self, instance, validated_data):
         if validated_data.get('address') is not None:
             address_data = validated_data.pop('address')
-            address_instance= instance.pop('address')
+            address_instance= instance.address
             for key, value in address_data.items():
                 setattr(address_instance, key, value)
             address_instance.save()
         if validated_data.get('minor_info') is not None:
             minor_data = validated_data.pop('minor_info')
-            minor_instance= instance.pop('minor_info')
+            minor_instance= instance.minor_info
             for key, value in minor_data.items():
                 setattr(minor_instance, key, value)
             minor_instance.save()
