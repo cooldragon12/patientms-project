@@ -119,7 +119,7 @@ function Patients(props) {
           <LinkedSelectionTable
             setSelection={setSelection}
             selection={selection}
-            columns={["ID", "Last Name", "First Name", "Sex", "Last Visit"]}
+            columns={[{label:"ID", value:"id"}, {label:"Last Name",value:"last_name"}, {label:"First Name", value:"first_name"}, {label:"Sex", value:"sex"}, {label:"Last Visit", value:"last_visit"}]}
             data={state.filteredData}
             sortHandler={sorthandler}
             ascending={state.ascending}

@@ -1,3 +1,4 @@
+const { spawn } = require('child_process');
 import { app } from 'electron';
 import serve from 'electron-serve';
 import { createWindow } from './helpers';
@@ -27,6 +28,22 @@ if (isProd) {
   }
 })();
 
+// // Start the Django server as a subprocess
+// const djangoServer = spawn('python', ['manage.py', 'runserver']);
+
+// // Handle output from the Django server
+// djangoServer.stdout.on('data', (data) => {
+//   console.log(`Django server output: ${data}`);
+// });
+
+// djangoServer.stderr.on('data', (data) => {
+//   console.error(`Django server error: ${data}`);
+// });
+
+// // Handle Django server exit
+// djangoServer.on('close', (code) => {
+//   console.log(`Django server exited with code ${code}`);
+// });
 app.on('window-all-closed', () => {
   app.quit();
 });

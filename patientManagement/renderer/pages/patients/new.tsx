@@ -584,7 +584,7 @@ const PageForm_3 = ({ form }) => {
               return (
                 <td key={index}>
                   <div>
-                    <Select defaultValue={""} value={form.values.teeth[tooth].condition} name={tooth} key={index} onChange={(e)=>onChangeHandler(e, tooth)}  data={status}/>
+                    <Select rightSection="" defaultValue={""} value={form.values.teeth[tooth].condition} name={tooth} key={index} onChange={(e)=>onChangeHandler(e, tooth)}  data={status}/>
                   </div>
                 </td>
               );
@@ -598,7 +598,7 @@ const PageForm_3 = ({ form }) => {
                 <td key={index}>
                   <div>
 
-                  <Select defaultValue={""}  name={tooth} value={form.values.teeth[tooth].condition}  key={index} onChange={(e)=>onChangeHandler(e, tooth)} data={status}/>
+                  <Select rightSection="" defaultValue={""}  name={tooth} value={form.values.teeth[tooth].condition}  key={index} onChange={(e)=>onChangeHandler(e, tooth)} data={status}/>
                   </div>
                 </td>
               );
@@ -646,7 +646,7 @@ const PageForm_3 = ({ form }) => {
                 <td key={index}>
                   <div>
 
-                  <Select defaultValue={""}  name={tooth} value={form.values.teeth[tooth].condition}  key={index} onChange={(e)=>onChangeHandler(e, tooth)}  data={status}/>
+                  <Select rightSection="" defaultValue={""}  name={tooth} value={form.values.teeth[tooth].condition}  key={index} onChange={(e)=>onChangeHandler(e, tooth)}  data={status}/>
                   </div>
                 </td>
               );
@@ -660,7 +660,7 @@ const PageForm_3 = ({ form }) => {
                 <td key={index}>
                   <div>
 
-                  <Select  defaultValue={""}  name={tooth} value={form.values.teeth[tooth].condition}  key={index} onChange={(e)=>onChangeHandler(e, tooth)}  data={status}/>
+                  <Select iconWidth={1}  defaultValue={""}  name={tooth} value={form.values.teeth[tooth].condition}  key={index} onChange={(e)=>onChangeHandler(e, tooth)}  data={status}/>
                   </div>
                 </td>
               );
@@ -695,6 +695,8 @@ const AddPatientModal = () => {
   const { basic_form, dentition_form, medicalhistory_form} = useContext(OperationContext);
   
   const pages = [basic_form, medicalhistory_form, dentition_form]
+
+  
  const conditionalComponent = () => {
   switch (page) {
    case 0:
@@ -737,7 +739,35 @@ const AddPatientModal = () => {
         Next
        </Button>
       ) : (
-       <Button onClick={() => setPage(page + 1)}>Submit</Button>
+       <Button onClick={() => {
+          basic_form.onSubmit(async (values, event)=>{
+            const res = await fetch("/api/patients", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(values),
+            });
+          })
+          medicalhistory_form.onSubmit(async (values, event)=>{
+            const res = await fetch("/api/patients", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(values),
+            });
+          })
+          dentition_form.onSubmit(async (values, event)=>{
+            const res = await fetch("/api/patients", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(values),
+            });
+          })
+        }}>Submit</Button>
       )}
      </Group>
     </Stack>

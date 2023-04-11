@@ -10,3 +10,10 @@ files:
       - package.json
       - app
 publish: null
+win:
+  target:
+    - nsis
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  include: "installer.nsh"
