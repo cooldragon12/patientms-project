@@ -1,7 +1,7 @@
-const { spawn } = require('child_process');
+
 import { app } from 'electron';
 import serve from 'electron-serve';
-import { createWindow } from './helpers';
+import { createWindow, django_background } from './helpers';
 
 const isProd: boolean = process.env.NODE_ENV === 'production';
 
@@ -18,7 +18,7 @@ if (isProd) {
     width: 1280,
     height: 780,
   });
-
+  django_background("../PMSProject/");
   if (isProd) {
     await mainWindow.loadURL('app://./home.html');
   } else {
@@ -26,24 +26,11 @@ if (isProd) {
     await mainWindow.loadURL(`http://localhost:${port}/`);
     // mainWindow.webContents.openDevTools();
   }
+  
 })();
+// Start the Django server as a subprocess
 
-// // Start the Django server as a subprocess
-// const djangoServer = spawn('python', ['manage.py', 'runserver']);
 
-// // Handle output from the Django server
-// djangoServer.stdout.on('data', (data) => {
-//   console.log(`Django server output: ${data}`);
-// });
-
-// djangoServer.stderr.on('data', (data) => {
-//   console.error(`Django server error: ${data}`);
-// });
-
-// // Handle Django server exit
-// djangoServer.on('close', (code) => {
-//   console.log(`Django server exited with code ${code}`);
-// });
 app.on('window-all-closed', () => {
   app.quit();
 });
