@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { useContext } from "react";
+import React, { useContext, useReducer } from "react";
 
 import { useEffect } from "react";
 import { NavigationProgress, nprogress } from "@mantine/nprogress";
@@ -26,14 +26,31 @@ import { LabelText } from "../../components/text_label";
 import { getPatientDetail } from "../../server/request";
 import { OperationContext } from "../../@context/operation";
 import { LinkedSelectionTable } from "../../components/list";
+import searchSortReducer, { SearchSortState } from "../../components/reducer/SearchSort";
+import { TreatmentRecordOverview } from "../../schema/treatment";
+
+const initialData: SearchSortState<TreatmentRecordOverview>= {
+  data: [],
+  filteredData: [],
+  searchQuery: null,
+  sortBy:"patient_id",
+  ascending: true,
+  currentPage: 1,
+  itemsPerPage: 3,
+};
+
+const treatmentReducer = searchSortReducer<TreatmentRecordOverview>;
 
 const PatientProfile = (props) => {
  const router = useRouter();
  const { patient_id } = router.query;
  const { anchor } = useContext(OperationContext);
  const [loading, setLoading] = React.useState(true);
-
- return (
+const [state, dispatch ] = useReducer(treatmentReducer, initialData);
+const sorthandler = (id:keyof TreatmentRecordOverview) => {
+  dispatch({ type: "SORT", payload: { key:id } });
+}
+return (
   <React.Fragment>
    <Head>
     <title> Patient {patient_id} | GPQ</title>
@@ -68,6 +85,7 @@ const PatientProfile = (props) => {
         sx={(theme) => {
          return { margin: "0.25rem" };
         }}
+        onClick={() => router.push("/patients/" + patient_id + "/add","/patients/treatment/add/")}
         variant="filled"
        >
         New Treatment
@@ -197,9 +215,14 @@ const PatientProfile = (props) => {
         </Text>
        </Group>
        <LinkedSelectionTable
+        setSelection={()=>{}}
+        selection={[]}
         empty_message="No Treatment Record yet!!"
-        data={[]}
-        columns={["ID", "Tooth No.", "Procedure", "Date"]}
+        data={state.filteredData}
+        columns={[{label:"ID", value:"patient_id"}, {label:"Tooth No.", value:"tooth_no"}, {label:"Procedure", value:"procedure"}, {label:"Date", value:"date"}, {label:"Status", value:"status"}]}
+        sortHandler={sorthandler}
+        ascending={state.ascending}
+        sortBy={state.sortBy}
        />
       </Stack>
      </Card>

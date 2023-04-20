@@ -35,7 +35,7 @@ export const PatientsProvider = ({ children }: { children: React.ReactNode }) =>
         try{
             const res = await getPatientOverview();
             const data = await res.json();
-
+            dispatch({ type: "LOAD", payload: data });
         }catch (e ){
             notifications.show({
                 title: "Error",
