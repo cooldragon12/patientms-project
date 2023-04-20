@@ -1,4 +1,6 @@
 import { zodResolver, useForm, UseFormReturnType } from "@mantine/form";
+import { useLocalStorage } from '@mantine/hooks';
+import {useEffect} from 'react';
 import { createContext, useState, Dispatch, SetStateAction } from "react";
 import {
  PatientAddress,
@@ -49,13 +51,27 @@ export const OperationProvider = ({
 }: {
  children: React.ReactNode;
 }) => {
+
  const tempData1 = {};
  const tempData2 = {};
   const tempData3 = {};
+  const  [basic_forms, setBasicForms] = useLocalStorage<PatientBasicInformation>({key: 'basic_forms', defaultValue: tempData1});
+  const  [medical_forms, setMedicalForms] = useLocalStorage({key: 'medical_forms', defaultValue: {...(tempData2 as PatientMedicalHistory),
+  conditions: [],
+  allergies:[],
+  current_treatment_details: "",
+  illnessOrOperation_details: "",
+  hospitalization_details: "",
+  medication_details: "",
+  hasCondition: "",
+  other_condition: "",
+  other_allergy: "",}});
+  const  [dentition_forms, setDentitionForms] = useLocalStorage({key: 'dentition_forms', defaultValue: {...tempData3 as PatientDentition, teeth: Object.assign({}, ...teethList.map((item) => ({[item]:{tooth_no: item, condition: ""}})))}});
+
  const [anchor, setAnchor] = useState([{ href: "/", label: "Home" }]);
  // const [opened, { open, close }] = useDisclosure(false);
  const basic_form = useForm({
-  initialValues: {...tempData1 as PatientBasicInformation},
+  initialValues: basic_forms,
   validate: {
     ...zodResolver(PatientBasicInformation),
     guardian_name: (value, values) => {
@@ -73,20 +89,8 @@ export const OperationProvider = ({
   validateInputOnChange: true,
   clearInputErrorOnChange: true,
  });
-
  const medicalhistory_form = useForm({
-  initialValues: {
-   ...(tempData2 as PatientMedicalHistory),
-   conditions: [],
-   allergies:[],
-   current_treatment_details: "",
-   illnessOrOperation_details: "",
-   hospitalization_details: "",
-   medication_details: "",
-   hasCondition: "",
-   other_condition: "",
-   other_allergy: "",
-  },
+  initialValues: medical_forms,
   validateInputOnBlur: true,
   validateInputOnChange: true,
   clearInputErrorOnChange: true,
@@ -128,13 +132,13 @@ export const OperationProvider = ({
   }
  });
  const dentition_form = useForm({
-  initialValues: {...tempData3 as PatientDentition, teeth: Object.assign({}, ...teethList.map((item) => ({[item]:{tooth_no: item, condition: ""}})))},
-
+  initialValues: dentition_forms,
   validate: {...zodResolver(PatientDentition)},
   validateInputOnBlur: true,
   validateInputOnChange: true,
   clearInputErrorOnChange: true,
  });
+ 
  const addPatient = (data: PatientFullInformation) => {
   // const resp = POST('/api/patients/', data);
   // resp.then((res)=>{
@@ -176,7 +180,13 @@ export const OperationProvider = ({
   //     })
   // })
  };
-
+ useEffect(() => {
+  return ()=>{
+    setBasicForms(basic_form.values);
+    setMedicalForms(medicalhistory_form.values);
+    setDentitionForms(dentition_form.values);
+  }
+ },[])
  return (
   <OperationContext.Provider
    value={{
