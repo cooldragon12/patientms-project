@@ -3,7 +3,7 @@ import { spawn, CommonSpawnOptions } from "child_process";
 const backgroundServer = (__dirname:string="")=>{
     // Start the virtual environement
     const venv = spawn('cmd', ['/c', 'venv\\Scripts\\activate.bat'], { shell: true });
-    const djangoServer = spawn('python', [__dirname + 'manage.py', 'runserver']);
+    const djangoServer = spawn('python', [__dirname + 'manage.py', 'runserver', '127.0.0.1:8000']);
     
       // Handle output from the Django server
       djangoServer.stdout.on('data', (data) => {

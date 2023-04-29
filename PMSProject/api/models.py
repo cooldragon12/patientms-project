@@ -35,9 +35,9 @@ class Patient(models.Model):
     @property
     def last_visit(self):
         return TreatmentRecord.objects.latest('date').date
-    
+    @property
     def patient_url(self):
-        return "/patient/" + str(self.pk) + "/"
+        return "/patients/" + str(self.pk) + "/"
 
 class PatientMinor(models.Model):
     patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="minor_info")
@@ -81,7 +81,7 @@ class TreatmentRecord (models.Model):
     patient_id=models.ForeignKey(Patient,on_delete=models.CASCADE, related_name="patient_treatments")
     date=models.DateField()
     tooth_no=models.PositiveBigIntegerField()
-    procedure=models.CharField(max_length=255)
+    procedure=models.ManyToManyField("Procedure", related_name="treatment_procedures")
     amount_charged=models.DecimalField(decimal_places=2,max_digits=10,)
     amount_paid=models.DecimalField(decimal_places=2,max_digits=10,null=True, blank=True)
     balance=models.DecimalField(decimal_places=2,max_digits=10, null=True, blank=True)
@@ -103,7 +103,8 @@ class Address (models.Model):
 class Procedure(models.Model):
     name= models.CharField(max_length=200)
     cost= models.DecimalField(decimal_places=2,max_digits=10, null=True, blank=True)
-
+    def __str__(self) -> str:
+        return self.name
 class Dentition(models.Model):
     """Dentition Status and Treatment Needs Record, Part of Dental Record"""
     class PeriodontalChoices(models.TextChoices):
@@ -128,7 +129,7 @@ class Dentition(models.Model):
     # Why there is no choices for screening and appliances?
     patient_id=models.OneToOneField(Patient,on_delete=models.CASCADE, primary_key=True, related_name="patient_dentition")
     periodontal_screening=MultiSelectField(max_length=100,choices=PeriodontalChoices.choices, null=True, blank=True)
-    occlusion=MultiSelectField( max_length=100,choices=OcclusionChoices.choices,null=True, blank=True)
+    occlusion=MultiSelectField(max_length=100,choices=OcclusionChoices.choices,null=True, blank=True)
     appliances=MultiSelectField(max_length=100, choices=AppliancesChoices.choices,null=True, blank=True)
     tmd=MultiSelectField( max_length=100,choices=TMDChoices.choices,null=True, blank=True)
 

@@ -119,7 +119,7 @@ export const RegularTable = ({columns=[], data=[], empty_message=""}) =>{
 
         return (<tr key={row}>
             {
-                columns.map((column, index)=><td key={row+""+column}><Skeleton  height={8} mt={7} radius="xl"/></td>)
+                columns.map((column, index)=><td key={row+"-column-"+column}><Skeleton  height={8} mt={7} radius="xl"/></td>)
             }
             </tr>)})
     useEffect(()=>{
@@ -129,7 +129,7 @@ export const RegularTable = ({columns=[], data=[], empty_message=""}) =>{
     }, [data])
     return (
         <ScrollArea h={600} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
-            <Table withBorder={true} verticalSpacing="sm" horizontalSpacing="sm" className={classes.table}>
+            <Table  verticalSpacing="sm" horizontalSpacing="sm" className={classes.table}>
                 <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
                     <tr>
                         {

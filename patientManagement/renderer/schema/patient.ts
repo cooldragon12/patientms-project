@@ -146,5 +146,5 @@ export interface PatientOverview extends PatientPrimary, PatientUrl {
  */
 export interface PatientUrl {
   readonly patient_url: string;
-  readonly patient_api_url: string;
+  // readonly patient_api_url: string;
 }

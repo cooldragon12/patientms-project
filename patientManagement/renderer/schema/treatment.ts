@@ -1,10 +1,14 @@
 import { Patient } from "./patient";
 import { z } from "zod";
 export const TreatmentRecord = z.object({
-  patient_id: z.string().nonempty(),
+  id: z.string().nonempty(),
   date: z.date(),
   tooth_no: z.number(),
-  procedures: z.string().nonempty(),
+  procedure: z.array(z.object({
+    value: z.string().nullable(),
+  label:  z.string().nullable(),
+  cost: z.number().nullable(),
+  })),
   amount_charged: z.number(),
   amount_paid: z.number().nullable(),
   balance: z.number().nullable(),

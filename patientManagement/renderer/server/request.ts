@@ -16,18 +16,22 @@ export const getClinicHistory = async () =>{
     const response = await fetch(API_URL+`/clinic-history/`,defaultContext);
     return response
 }
+export const getThroughLink = async (link?:string) =>{
+    const response = await fetch(link,defaultContext);
+    return response
+}
 
 export const getPatientOverview = async () => {
     try{
-        const response = await fetch(API_URL+`/patients/overview/`,defaultContext);
+        const response = await fetch(`${API_URL}/patients/overview`,defaultContext);
         return response
     }catch (e){
         throw e
     }
 }
 
-export const getPatientDetail = async (link?:string) => {
-    const response = await fetch(link,defaultContext);
+export const getPatientDetail = async (id?:string) => {
+    const response = await fetch(`${API_URL}/patients/${id}`,defaultContext);
     return response
 }
 

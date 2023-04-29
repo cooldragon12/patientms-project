@@ -1,11 +1,10 @@
 from rest_framework import viewsets, mixins
-from rest_framework.decorators import action
+from rest_framework.decorators import action,api_view
 from .serializers import *
 from .models import *
 
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.reverse import reverse
+
 
 
 class PatientViewSet(viewsets.ModelViewSet):
@@ -16,7 +15,12 @@ class PatientViewSet(viewsets.ModelViewSet):
     def list_overview(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = PatientOverviewSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=200)
+    @action(detail=True, methods=['get'], url_path='treatments')
+    def list_treatment(self, request, *args, **kwargs):
+        queryset = self.get_object().patient_treatments.all()
+        serializer = TreatmentRecordSerializer(queryset, many=True)
+        return Response(serializer.data, status=200)
 
 # 
 class PatientWomanViewSet(viewsets.ModelViewSet):

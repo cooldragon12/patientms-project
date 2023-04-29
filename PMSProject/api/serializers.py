@@ -1,22 +1,30 @@
-from rest_framework import serializers
-from .models import *
+from rest_framework import serializers, fields
+from .models import TreatmentRecord, Address, Procedure, Patient, PatientMinor, PatientWoman, MedicalHistory, Dentition, ToothStatus, PatientMinor, PatientWoman, MedicalHistory, Dentition, ToothStatus
 
 
+class ProcedureSerializer(serializers.ModelSerializer):
+    label = serializers.SerializerMethodField(method_name='_label')
+    value = serializers.ReadOnlyField(source='name')
+    name = serializers.CharField( write_only=True)
+    class Meta:
+        model = Procedure
+        fields= ["label", "value", "cost", "name"]
+
+    def _label(self, obj):
+        return obj.name.capitalize()
 
 class TreatmentRecordSerializer(serializers.ModelSerializer):
+    procedure = ProcedureSerializer(many=True)
     class Meta:
         model = TreatmentRecord
-        fields = "__all__"
+        fields = ["id", "tooth_no","procedure","date", "balance"]
 
 class AddressSerializer(serializers.ModelSerializer):
+    full_address = serializers.ReadOnlyField()
     class Meta:
         model = Address
         fields = "__all__"
 
-class ProcedureSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Procedure
-        fields= "__all__"
 # ===============Dentition Records===========================
 class ToothStatusSerializer(serializers.ModelSerializer):
     # This will have to be dependent to Dentition Model
@@ -26,6 +34,10 @@ class ToothStatusSerializer(serializers.ModelSerializer):
 class DentitionSerializer(serializers.ModelSerializer):
     # TODO: Add Edit and Delete for the Teeth Status connected to the Dentition
     teeth_status = ToothStatusSerializer(many=True)
+    tmd = fields.MultipleChoiceField(choices=Dentition.TMDChoices.choices, allow_blank=True)
+    appliances = fields.MultipleChoiceField(choices=Dentition.AppliancesChoices.choices, allow_blank=True)
+    occlusion = fields.MultipleChoiceField(choices=Dentition.OcclusionChoices.choices, allow_blank=True)
+    periodontal_screening = fields.MultipleChoiceField(choices=Dentition.PeriodontalChoices.choices, allow_blank=True)
     class Meta:
         model = Dentition
         fields = "__all__"
@@ -48,7 +60,7 @@ class PatientSerialzer (serializers.HyperlinkedModelSerializer):
     minor_info = PatientMinorSerializer()
     medical_history = serializers.HyperlinkedRelatedField(view_name='medicalhistory-detail', read_only=True, lookup_field='pk', allow_null=True)
     patient_dentition = serializers.HyperlinkedRelatedField(view_name='dentition-detail', read_only=True, lookup_field='pk', allow_null=True)
-    patient_treatments = serializers.HyperlinkedRelatedField(view_name='treatmentrecord-detail', many=True, lookup_field='pk',read_only=True,allow_null=True)
+    treatments = serializers.HyperlinkedIdentityField(view_name='patients-list-treatment', read_only=True, lookup_field='pk', allow_null=True)
     class Meta:
         model= Patient
         fields = [
@@ -63,7 +75,7 @@ class PatientSerialzer (serializers.HyperlinkedModelSerializer):
             'mobile_number',
             'email','address',
             'occupation','reason',
-            'patient_treatments',
+            'treatments',
             'medical_history', 
             'patient_dentition',
             'minor_info']
@@ -86,10 +98,10 @@ class PatientSerialzer (serializers.HyperlinkedModelSerializer):
         return instance
 # =========================================================    
 class PatientOverviewSerializer(serializers.HyperlinkedModelSerializer):
-    patient_api_url = serializers.HyperlinkedIdentityField(view_name='patients-detail', lookup_field='pk')
+    # patient_api_url = serializers.HyperlinkedIdentityField(view_name='patients-detail', lookup_field='pk')
     class Meta:
         model=Patient
-        fields = ['id', 'last_name', 'first_name', 'sex', 'last_visit', 'patient_url', 'patient_api_url']
+        fields = ['id', 'last_name', 'first_name', 'sex', 'last_visit', 'patient_url']
 class HistoryOverviewSerializer(serializers.ModelSerializer):
     name = serializers.SlugRelatedField(slug_field='patient_treatments.name', read_only=True)
     class Meta:

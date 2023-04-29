@@ -4,6 +4,7 @@ import { API_URL } from "../server";
 import { getPatientOverview } from "../server/request";
 import { notifications } from "@mantine/notifications";
 import searchSortReducer, { SearchSortAction, SearchSortState } from "../components/reducer/SearchSort";
+import { IconAlertCircle } from "@tabler/icons-react";
 
 export interface IPatientContext {
     state: SearchSortState<PatientOverview>;
@@ -35,20 +36,23 @@ export const PatientsProvider = ({ children }: { children: React.ReactNode }) =>
         try{
             const res = await getPatientOverview();
             const data = await res.json();
-            dispatch({ type: "LOAD", payload: data });
+            
+            dispatch({ type: "LOAD", payload: {data:data} });
+            
         }catch (e ){
+            console.log(e)
             notifications.show({
                 title: "Error",
                 message: "Failed to fetch patients",
                 color: "red",
-                icon: "exclamation-circle"
+                icon: <IconAlertCircle />,
             })
         }
     }
     
     useEffect(()=>{
-        console.log(state);
-    },[state])
+        fetchPatients();
+    },[])
     return (
         <PatientsContext.Provider value={{ state, dispatch, fetchPatients }}>
             {children}

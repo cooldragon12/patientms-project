@@ -24,40 +24,26 @@ import { LabelText } from "../../components/text_label";
 
 import { getPatientDetail } from "../../server/request";
 import { OperationContext } from "../../@context/operation";
-import { LinkedSelectionTable } from "../../components/list";
-import searchSortReducer, { SearchSortState } from "../../components/reducer/SearchSort";
-import { TreatmentRecordOverview } from "../../schema/treatment";
 import CreateTreatment from "../../components/form/CreateTreatment";
 import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
-const initialData: SearchSortState<TreatmentRecordOverview>= {
-  data: [],
-  filteredData: [],
-  searchQuery: null,
-  sortBy:"patient_id",
-  ascending: true,
-  currentPage: 1,
-  itemsPerPage: 3,
-};
-
-const treatmentReducer = searchSortReducer<TreatmentRecordOverview>;
+import { API_URL } from "../../server";
+import MedicalHistoryCard from "../../components/page/Patients/MedicalHistoryCard";
+import TreatmentHistoryCard from "../../components/page/Patients/TreatmentHistoryCard";
 
 const PatientProfile = (props) => {
  const router = useRouter();
  const [open, { toggle }] = useDisclosure(false);
  const { patient_id } = router.query;
  const { anchor } = useContext(OperationContext);
- const [loading, setLoading] = React.useState(true);
-const [state, dispatch ] = useReducer(treatmentReducer, initialData);
-const sorthandler = (id:keyof TreatmentRecordOverview) => {
-  dispatch({ type: "SORT", payload: { key:id } });
-}
+
+
   const form = useForm<{procedures:any[]}>({
     initialValues: {procedures:[]},
       
   })
   const handleSubmit = async () => {
-    const response = await fetch('http://localhost:3000/api/treatment', {
+    const response = await fetch(`${API_URL}/treatment`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -79,10 +65,17 @@ return (
       onClose={() => toggle()}
       size="xl"
       lockScroll
+      
       >
         <form onSubmit={()=>{toggle(); handleSubmit()}}>
-          <CreateTreatment form={form}/>
-          <Button>Submit</Button>
+          <Box p={100}>
+            <CreateTreatment form={form}/>
+
+          </Box>
+          <Group align="flex-end" spacing={"lg"}>
+            <Button>Submit</Button>
+
+          </Group>
         </form>
     </Modal>
    <Text size={28} color="gray" weight="bold">
@@ -157,7 +150,7 @@ return (
       padding="lg"
       radius="md"
      >
-      <Stack spacing={0}>
+      <Stack spacing={0} align="center">
        <Avatar
         variant="rounded"
         alt="https://pbs.twimg.com/profile_images/1361031780/IMG_20110205_174504_0_normal.jpg"
@@ -168,7 +161,7 @@ return (
         <Text weight={"bold"}>{props.patient.last_name},</Text>
         <Text weight={"bold"}>{props.patient.first_name}</Text>
         <Text weight={"bold"}>
-         {props.patient.middle_initial.toUpperCase()}.
+         {props.patient.middle_initial ? props.patient.middle_initial+"." : ""}
         </Text>
        </Group>
        <Group spacing={10} position="center" align="center">
@@ -207,7 +200,7 @@ return (
 
        <Grid.Col span={6}>
         <LabelText label="Address">
-         {props.patient.address ? props.patient.address : "N/A"}
+         {props.patient.address ? props.patient.address.full_address : "N/A"}
         </LabelText>
        </Grid.Col>
        <Grid.Col span={6}>
@@ -218,89 +211,21 @@ return (
       </Grid>
      </Card>
     </Grid.Col>
-      {/* Unknown */}
+      {/* Medical History */}
     <Grid.Col span={5}>
      <Card
-      sx={(theme) => ({
-       flexDirection: "row",
-       display: "flex",
-       gap: "2rem",
-       // flexGrow: .4,
-       flexWrap: "wrap",
-      })}
       shadow="sm"
       padding="lg"
       radius="md"
      >
-      .
+      <MedicalHistoryCard link={props.patient.medical_history}/>
+      
      </Card>
     </Grid.Col>
       {/* TreatmentHistory */}
-    <Grid.Col span={8}>
+    <Grid.Col span={12}>
      <Card shadow="sm" padding="lg" radius="md">
-      <Stack spacing={"sm"}>
-       <Group>
-        <Text weight="bolder" variant={"text"} size={"xl"}>
-         Treatment History
-        </Text>
-       </Group>
-       <LinkedSelectionTable
-        setSelection={()=>{}}
-        selection={[]}
-        empty_message="No Treatment Record yet!!"
-        data={state.filteredData}
-        columns={[{label:"ID", value:"patient_id"}, {label:"Tooth No.", value:"tooth_no"}, {label:"Procedure", value:"procedure"}, {label:"Date", value:"date"}, {label:"Status", value:"status"}]}
-        sortHandler={sorthandler}
-        ascending={state.ascending}
-        sortBy={state.sortBy}
-       />
-      </Stack>
-     </Card>
-    </Grid.Col>
-    {/* Medical History */}
-    <Grid.Col span={4}>
-     <Card shadow="sm" padding="lg" radius="md">
-      <Group
-       sx={(theme) => ({
-        flexDirection: "column",
-        alignItems: "flex-start",
-       })}
-       spacing={"sm"}
-      >
-       <Text weight="bolder" variant={"text"} size={"xl"}>
-        Medical History
-       </Text>
-      </Group>
-      <Divider my={"md"}/>
-      <Stack>
-       <Text weight="normal" variant={"text"} size={"sm"}>
-        Are you in a good health condition? <b>{props.patient.goodhealth ? "Yes" : "No"}</b>
-       </Text>
-       <Text weight="normal" variant={"text"} size={"sm"}>
-        Do you use alcohol, cocaine or other dangerous drugs? <b>{props.patient.isAlcoholOrDrugs ? "Yes" : "No"}</b>
-       </Text>
-       <Text weight="normal" variant={"text"} size={"sm"}>
-        Do you use tabacco products? <b>{props.patient.tobacco ? "Yes" : "No"}</b>
-       </Text>
-       <Text weight="normal" variant={"text"} size={"sm"}>
-        Have you ever hospitalization? <b>{props.patient.hospitalization ? "Yes, " + props.patient.hospitalization : "No"}</b>
-       </Text>
-       <Text weight="normal" variant={"text"} size={"sm"}>
-       Are you taking any prescription/non-prescription medication? <b>{props.patient.medication ?  (<><br/>{props.patient.medication}</>): "No"}</b>
-       </Text>
-       <Text weight="normal" variant={"text"} size={"sm"}>
-       Are you in medical treatment now? <b>{props.patient.current_treatment ?  (<><br/>{props.patient.current_treatment}</>): "No"}</b>
-       </Text>
-       <Text weight="normal" variant={"text"} size={"sm"}>
-       Have you ever had serious illness or surgical operation? <b>{props.patient.isIllnessOrOperation ?  (<><br/>{props.patient.current_treatment}</>): "No"}</b>
-       </Text>
-       <Text weight="normal" variant={"text"} size={"sm"}>
-        Allergic {props.patient.allergies ? <>to the following <br/><ul>{props.patient.allergies.map((val , index)=><li key={index}>{val}</li>)}</ul></>:  (<>to <b>None</b></>)}
-       </Text>
-       <Text weight="normal" variant={"text"} size={"sm"}>
-       Have the following conditions: <b>{props.patient.isIllnessOrOperation ? <><ul>{props.patient.allergies.map((val , index)=><li key={index}>{val}</li>)}</ul></>: "N/A"}</b>
-       </Text>
-      </Stack>
+      <TreatmentHistoryCard link={props.patient.treatments}/>
      </Card>
     </Grid.Col>
     {/* Dentition Condition */}
@@ -326,7 +251,7 @@ return (
 };
 export async function getServerSideProps(context) {
  const { patient_id } = context.query;
- try {
+
   const res = await getPatientDetail(patient_id)
   const data = await res.json();
   return {
@@ -334,20 +259,7 @@ export async function getServerSideProps(context) {
     patient: data,
    },
   };
- } catch (err) {
-  const data = {
-   first_name: "Johndel",
-   last_name: "Doe",
-   middle_initial: "A",
-   age: 20,
-   sex: "Male",
-  };
-  return {
-   props: {
-    patient: data,
-   },
-  };
- }
+
 }
 
 export default PatientProfile;

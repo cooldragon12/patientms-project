@@ -22,5 +22,9 @@ class DentitionAdmin(admin.ModelAdmin):
     inlines = [TeethStatuses]
 admin.site.register(PatientMinor)
 admin.site.register(PatientWoman)
-admin.site.register(TreatmentRecord)
-admin.site.register(Procedure)
+@admin.register(TreatmentRecord)
+class TreatmentRecordAdmin(admin.ModelAdmin):
+    list_display = ('id','patient_id','date','tooth_no','amount_charged','amount_paid','balance')
+@admin.register(Procedure)
+class ProcedureAdmin(admin.ModelAdmin):
+    list_display = ('name','cost')

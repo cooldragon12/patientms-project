@@ -21,12 +21,7 @@ function Patients(props) {
   const searchRef = React.useRef(null);
   const router = useRouter();
   // Data Related State
-  const {state, dispatch} = useContext(PatientsContext)
- 
-  useEffect(() => {
-    console.log(props.data)
-    dispatch({type: "LOAD", payload: {data: props.data}})
-  }, [props.data]);
+  const {state, dispatch} = useContext(PatientsContext);
 
   const searchHandler = (e) => {
     dispatch({ type: "SEARCH", payload: { searchQuery:e.target.value } });
@@ -130,60 +125,60 @@ function Patients(props) {
     </React.Fragment>
   );
 }
-export async function getStaticProps(context) {
-  const data:PatientOverview[] = [
-    {
-      id: "1",
-      last_name: "Encabo",
-      first_name: "Johndel",
-      sex: "M",
-      last_visit: "2021-01-01",
-      patient_url: "/patients/1",
-      patient_api_url: "/patients/1",
-    },
-    {
-      id: "2",
-      last_name: "Encabo",
-      first_name: "Lohndel",
-      sex: "M",
-      last_visit: "2021-05-01",
-      patient_url: "/patients/2",
-      patient_api_url: "/patients/2",
-    },
-    {
-      id: "3",
-      last_name: "Encabo",
-      first_name: "Johndel",
-      sex: "M",
-      last_visit: "2021-08-01",
-      patient_url: "/patients/3",
-      patient_api_url: "/patients/3",
-    },
-    {
-      id: "100",
-      last_name: "Encabo",
-      first_name: "Dohndel",
-      sex: "M",
-      last_visit: "2021-09-01",
-      patient_url: "/patients/4",
-      patient_api_url: "/patients/4",
-    },
-    {
-      id: "9",
-      last_name: "Encabo",
-      first_name: "Johndel",
-      sex: "M",
-      last_visit: "2021-01-01",
-      patient_url: "/patients/5",
-      patient_api_url: "/patients/5",
-    },
-  ];
-  return {
-    props: {
-      data: data,
-    },
-    revalidate: 10,
-  };
-}
+// export async function getStaticProps(context) {
+//   const data:PatientOverview[] = [
+//     {
+//       id: "1",
+//       last_name: "Encabo",
+//       first_name: "Johndel",
+//       sex: "M",
+//       last_visit: "2021-01-01",
+//       patient_url: "/patients/1",
+//       patient_api_url: "/patients/1",
+//     },
+//     {
+//       id: "2",
+//       last_name: "Encabo",
+//       first_name: "Lohndel",
+//       sex: "M",
+//       last_visit: "2021-05-01",
+//       patient_url: "/patients/2",
+//       patient_api_url: "/patients/2",
+//     },
+//     {
+//       id: "3",
+//       last_name: "Encabo",
+//       first_name: "Johndel",
+//       sex: "M",
+//       last_visit: "2021-08-01",
+//       patient_url: "/patients/3",
+//       patient_api_url: "/patients/3",
+//     },
+//     {
+//       id: "100",
+//       last_name: "Encabo",
+//       first_name: "Dohndel",
+//       sex: "M",
+//       last_visit: "2021-09-01",
+//       patient_url: "/patients/4",
+//       patient_api_url: "/patients/4",
+//     },
+//     {
+//       id: "9",
+//       last_name: "Encabo",
+//       first_name: "Johndel",
+//       sex: "M",
+//       last_visit: "2021-01-01",
+//       patient_url: "/patients/5",
+//       patient_api_url: "/patients/5",
+//     },
+//   ];
+//   return {
+//     props: {
+//       data: data,
+//     },
+//     revalidate: 10,
+//   };
+// }
 
 export default Patients;
