@@ -1,7 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useContext, useReducer } from "react";
-
 import { useEffect } from "react";
 import { NavigationProgress, nprogress } from "@mantine/nprogress";
 import {
@@ -19,7 +18,7 @@ import {
  Button,
  HoverCard,
  Container,
- Box,
+ Box,Modal
 } from "@mantine/core";
 import { LabelText } from "../../components/text_label";
 
@@ -28,7 +27,9 @@ import { OperationContext } from "../../@context/operation";
 import { LinkedSelectionTable } from "../../components/list";
 import searchSortReducer, { SearchSortState } from "../../components/reducer/SearchSort";
 import { TreatmentRecordOverview } from "../../schema/treatment";
-
+import CreateTreatment from "../../components/form/CreateTreatment";
+import { useDisclosure } from "@mantine/hooks";
+import { useForm } from "@mantine/form";
 const initialData: SearchSortState<TreatmentRecordOverview>= {
   data: [],
   filteredData: [],
@@ -43,6 +44,7 @@ const treatmentReducer = searchSortReducer<TreatmentRecordOverview>;
 
 const PatientProfile = (props) => {
  const router = useRouter();
+ const [open, { toggle }] = useDisclosure(false);
  const { patient_id } = router.query;
  const { anchor } = useContext(OperationContext);
  const [loading, setLoading] = React.useState(true);
@@ -50,11 +52,39 @@ const [state, dispatch ] = useReducer(treatmentReducer, initialData);
 const sorthandler = (id:keyof TreatmentRecordOverview) => {
   dispatch({ type: "SORT", payload: { key:id } });
 }
+  const form = useForm<{procedures:any[]}>({
+    initialValues: {procedures:[]},
+      
+  })
+  const handleSubmit = async () => {
+    const response = await fetch('http://localhost:3000/api/treatment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({procedures: form.values.procedures, patient_id: patient_id})
+    });
+    console.log(response.json())
+    return response
+  }
+  
 return (
   <React.Fragment>
    <Head>
     <title> Patient {patient_id} | GPQ</title>
    </Head>
+   <Modal
+      opened={open}
+      title="Create New Treatment"
+      onClose={() => toggle()}
+      size="xl"
+      lockScroll
+      >
+        <form onSubmit={()=>{toggle(); handleSubmit()}}>
+          <CreateTreatment form={form}/>
+          <Button>Submit</Button>
+        </form>
+    </Modal>
    <Text size={28} color="gray" weight="bold">
     Patient: {props.patient.first_name}&apos;s Information
    </Text>
@@ -85,7 +115,7 @@ return (
         sx={(theme) => {
          return { margin: "0.25rem" };
         }}
-        onClick={() => router.push("/patients/" + patient_id + "/add","/patients/treatment/add/")}
+        onClick={() => toggle()}
         variant="filled"
        >
         New Treatment
