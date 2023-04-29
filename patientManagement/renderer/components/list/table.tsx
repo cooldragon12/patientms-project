@@ -8,7 +8,7 @@ export const useStyles = createStyles((theme) => ({
     header: {
         position: 'sticky',
         top: 0,
-        backgroundColor: theme.colors.mint_green[0],
+        // backgroundColor: theme.colors.mint_green[0],
         borderRadius: theme.radius.md,
         
         
@@ -30,7 +30,6 @@ export const useStyles = createStyles((theme) => ({
     table:{
         borderRadius: theme.radius.lg,
         // borderColor: theme.colors.mint_green[3]
-       
         "tbody":{
             borderRadius: theme.radius.md,
 
