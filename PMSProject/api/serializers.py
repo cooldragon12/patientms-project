@@ -3,9 +3,10 @@ from .models import TreatmentRecord, Address, Procedure, Patient, PatientMinor, 
 
 
 class ProcedureSerializer(serializers.ModelSerializer):
-    label = serializers.SerializerMethodField(method_name='_label')
-    value = serializers.ReadOnlyField(source='name')
-    name = serializers.CharField( write_only=True)
+    label = serializers.SerializerMethodField(method_name='_label', read_only=True)
+    value = serializers.ReadOnlyField(source='name', read_only=True)
+    name = serializers.CharField(write_only=True)
+
     class Meta:
         model = Procedure
         fields= ["label", "value", "cost", "name"]
@@ -14,11 +15,21 @@ class ProcedureSerializer(serializers.ModelSerializer):
         return obj.name.capitalize()
 
 class TreatmentRecordSerializer(serializers.ModelSerializer):
-    procedure = ProcedureSerializer(many=True)
+    procedure = ProcedureSerializer(many=True, read_only=True)
+    procedures = serializers.ListField(child=serializers.CharField(max_length=200), required=True, write_only=True)
     class Meta:
         model = TreatmentRecord
-        fields = ["id", "tooth_no","procedure","date", "balance"]
-
+        fields = ["id", "tooth_no","procedure", "procedures","date", "balance", "patient_id", "amount_charged", "amount_paid"]
+        extra_kwargs={
+            "patient_id": {"write_only": True},
+        }
+    def create(self, validated_data):
+        procedures_data = validated_data.pop('procedures')
+        treatment_record = TreatmentRecord.objects.create(**validated_data)
+        for procedure_data in procedures_data:
+            procedure = Procedure.objects.get(name=procedure_data)
+            treatment_record.procedure.add(procedure)
+        return treatment_record
 class AddressSerializer(serializers.ModelSerializer):
     full_address = serializers.ReadOnlyField()
     class Meta:

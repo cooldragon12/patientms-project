@@ -30,7 +30,7 @@ const TreatmentHistoryCard = ({link}:{link:string}) => {
     }
     const dataHandler = async ()=>{
         try{
-            const res = await fetch(link);
+            const res = await fetch(link,);
             const data = await res.json();
             dispatch({ type: "LOAD", payload: {data:data} });
         }catch (e ){
@@ -45,6 +45,7 @@ const TreatmentHistoryCard = ({link}:{link:string}) => {
     }
     useEffect(()=>{
         dataHandler();
+        return ()=>{dispatch({type:"RESET"})}
     },[])
     return (
         <>

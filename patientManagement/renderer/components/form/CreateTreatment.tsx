@@ -1,12 +1,31 @@
-import {useEffect, useState} from 'react'
-import { MultiSelect, List, ScrollArea, Button } from '@mantine/core';
+import {forwardRef, useEffect, useState} from 'react'
+import { MultiSelect, List, ScrollArea, Button, Group, Text, Select, NativeSelect, TextInput } from '@mantine/core';
 import { RegularTable } from '../list';
 import { IconX } from '@tabler/icons-react';
 import { UseFormReturnType } from '@mantine/form';
 import { API_URL } from '../../server';
-
-const CreateTreatment = ({form}:{form: UseFormReturnType<{procedures:any[]}>}) => {
-    const [procedures, setProcedures] = useState([]); // This is the state that will be updated when the user selects a procedure
+import { teethList} from '../TeethList';
+interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {
+  label: string;
+  value: string;
+  cost: string;
+}
+const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
+  ({ label, cost, value, ...others }: ItemProps, ref) => (
+    <div ref={ref} {...others}>
+      <Group noWrap>
+        <div>
+          <Text>{label}</Text>
+          <Text size="xs" color="dimmed">
+            {cost}
+          </Text>
+        </div>
+      </Group>
+    </div>
+  )
+);
+const CreateTreatment = ({form}:{form: UseFormReturnType<{procedure:any[], tooth_no:number, amount_charged:number}>}) => {
+    const [procedures, setProcedures] = useState([]); // This is the state that will be updated when the user create a procedure
     const fetchProcedures = async () => {
         const response = await fetch(`${API_URL}/procedure`);
         const data = await response.json();
@@ -34,32 +53,59 @@ const CreateTreatment = ({form}:{form: UseFormReturnType<{procedures:any[]}>}) =
    
 
     const handleDelete = (index) => {
-      form.setValues({procedures: form.values.procedures.filter((item, i) => i !== index)})
+      form.setValues({procedure: form.values.procedure.filter((item, i) => i !== index)})
     }
     return (
         <>
+            {/* <Text>Select the tooth where the procedure is done</Text> */}
+            <NativeSelect 
+              label="Tooth number"
+              placeholder="Select Tooth Number"
+              description="Select the tooth number where the procedure is done"
+              withAsterisk
+              data={teethList}
+              {...form.getInputProps('tooth_no')}
+            />
+            <TextInput 
+              label="Amount Charged"
+              placeholder="Enter the amount charged"
+              description="Enter the amount charged for the procedures"
+              withAsterisk
+              type="number"
+              {...form.getInputProps('amount_charged')}
+            />
             <MultiSelect
                 label="Procedures"
+                description="Select the procedures done"
                 placeholder="Select procedures or Create new"
                 data={procedures}
-                value={form.values.procedures}
-                onChange={(e)=>{form.setValues({procedures: [...form.values.procedures,e]})}}
+                value={form.values.procedure}
+                onChange={(e)=>{form.setValues({procedure: [...form.values.procedure,e]})}}
                 searchable
                 creatable
+                variant='unstyled'
+                sx={(theme)=>({
+                  borderBottom: '1px solid grey',
+                  paddingTop: '1rem',
+                  paddingBottom: '0.5rem',
+
+                })}
+                withAsterisk
+                size='md'
                 getCreateLabel={(query) => `+ Create ${query}`}
                 onCreate={(query) => {
-                  const item = {label: query, value: query, cost:null };
-                  setProcedures((current) => [...current, item]);
+                  const item = {value: query, label: query, cost:null };
                   createNewProcedure(query)
-                  .catch((e)=>console.log(e));
-                  // fetchProcedures();
+                  .catch((e)=>console.log(e)).finally(()=>{fetchProcedures()});
                   return item; 
                 }}
+                itemComponent={SelectItem}
+                {...form.getInputProps('procedure')}
             />
          
             <List>
-                {form.values.procedures.map((item, index) => (
-                  <List.Item p={5} icon={<IconX onClick={()=>handleDelete(index)}/>} key={index}>{item.label}</List.Item>
+                {form.values.procedure.map((item, index) => (
+                  <List.Item pb={10} icon={<IconX size={15} onClick={()=>{handleDelete(index); console.log(item)}}/>} key={index+"item-multiselect"}>{item}</List.Item>
                 ))}
             </List>
            

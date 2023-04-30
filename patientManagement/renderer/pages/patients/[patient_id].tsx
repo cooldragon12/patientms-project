@@ -18,7 +18,7 @@ import {
  Button,
  HoverCard,
  Container,
- Box,Modal
+ Box,Modal, Affix, rem
 } from "@mantine/core";
 import { LabelText } from "../../components/text_label";
 
@@ -38,44 +38,58 @@ const PatientProfile = (props) => {
  const { anchor } = useContext(OperationContext);
 
 
-  const form = useForm<{procedures:any[]}>({
-    initialValues: {procedures:[]},
-      
+  const form = useForm<{procedure:any[], tooth_no:number, amount_charged:number}>({
+    initialValues: {procedure:[], tooth_no:0, amount_charged:0},
+    validate: {
+      procedure: (value) => {
+        if (value.length < 1) {
+          return 'Please select at least one procedure'
+        }
+      }
+    }
   })
-  const handleSubmit = async () => {
-    const response = await fetch(`${API_URL}/treatment`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({procedures: form.values.procedures, patient_id: patient_id})
-    });
-    console.log(response.json())
-    return response
-  }
   
+  const title = `Patient ${patient_id} | GPQ`
 return (
   <React.Fragment>
-   <Head>
-    <title> Patient {patient_id} | GPQ</title>
+   <Head key={"-page"}>
+    <title>{title}</title>
    </Head>
    <Modal
       opened={open}
       title="Create New Treatment"
       onClose={() => toggle()}
       size="xl"
-      lockScroll
-      
       >
-        <form onSubmit={()=>{toggle(); handleSubmit()}}>
-          <Box p={100}>
+        <form onSubmit={form.onSubmit(async(values) =>{
+          console.log(form.values)
+            const response = await fetch(`${API_URL}/treatment`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                tooth_no: values.tooth_no,
+                procedures: values.procedure,
+                balance:0, 
+                patient_id: patient_id,
+                amount_charged: values.amount_charged
+              })
+            });
+            console.log(response)
+            form.reset();
+            toggle();
+            })}
+          >
+          
+          <Group pos={"static"} position="right" align="center" spacing={"lg"}>
+            <Button type="submit">Submit</Button>
+          </Group>
+          
+          <Box p={50}>
             <CreateTreatment form={form}/>
 
           </Box>
-          <Group align="flex-end" spacing={"lg"}>
-            <Button>Submit</Button>
-
-          </Group>
         </form>
     </Modal>
    <Text size={28} color="gray" weight="bold">
@@ -250,14 +264,14 @@ return (
  );
 };
 export async function getServerSideProps(context) {
- const { patient_id } = context.query;
-
+  const { patient_id } = context.query;
   const res = await getPatientDetail(patient_id)
-  const data = await res.json();
+  const patient_data = await res.json();
   return {
    props: {
-    patient: data,
+    patient: patient_data,
    },
+   
   };
 
 }

@@ -79,10 +79,10 @@ class PatientWoman(models.Model):
     # def 
 class TreatmentRecord (models.Model):
     patient_id=models.ForeignKey(Patient,on_delete=models.CASCADE, related_name="patient_treatments")
-    date=models.DateField()
+    date=models.DateField(auto_now=True)
     tooth_no=models.PositiveBigIntegerField()
     procedure=models.ManyToManyField("Procedure", related_name="treatment_procedures")
-    amount_charged=models.DecimalField(decimal_places=2,max_digits=10,)
+    amount_charged=models.DecimalField(decimal_places=2,max_digits=10)
     amount_paid=models.DecimalField(decimal_places=2,max_digits=10,null=True, blank=True)
     balance=models.DecimalField(decimal_places=2,max_digits=10, null=True, blank=True)
     def record_url(self):

@@ -1,4 +1,4 @@
-import { Patient } from "./patient";
+
 import { z } from "zod";
 export const TreatmentRecord = z.object({
   id: z.string().nonempty(),
@@ -6,8 +6,8 @@ export const TreatmentRecord = z.object({
   tooth_no: z.number(),
   procedure: z.array(z.object({
     value: z.string().nullable(),
-  label:  z.string().nullable(),
-  cost: z.number().nullable(),
+    label:  z.string().nullable(),
+    cost: z.number().nullable(),
   })),
   amount_charged: z.number(),
   amount_paid: z.number().nullable(),
@@ -33,7 +33,7 @@ export interface TreatmentRecordOverview
 export const Procedures = z.object({
   id: z.string().nonempty(),
   name: z.string().nonempty(),
-  amount: z.number(),
+  cost: z.number(),
 });
 
 export interface IClinicHistoryRecord {

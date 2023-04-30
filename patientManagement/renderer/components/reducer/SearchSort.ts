@@ -21,7 +21,7 @@ export interface SearchSortState<T> {
  *
  */
 export interface SearchSortAction<T> {
- type: "LOAD" | "SEARCH" | "SORT" | "PAGINATE";
+ type: "LOAD" | "SEARCH" | "SORT" | "PAGINATE" | "RESET";
  payload?: {
   data?: T[];
   filteredData?: T[];
@@ -38,6 +38,16 @@ const searchSortReducer = <T>(
  action: SearchSortAction<T>
 ): SearchSortState<T> => {
  switch (action.type) {
+  case "RESET":
+    return {
+      ...state,
+      data: [],
+      filteredData: [],
+      searchQuery: "",
+      ascending: true,
+      itemsPerPage: 10,
+      currentPage: 1,
+    };
   case "LOAD":
    const data = action.payload?.data ?? [];
    const filteredData = data.slice().sort((a, b) => {

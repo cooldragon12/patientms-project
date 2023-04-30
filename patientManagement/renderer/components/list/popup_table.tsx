@@ -28,7 +28,7 @@ import { useDisclosure } from "@mantine/hooks";
 function Th({ children, sorted, onSort, index, loading }) {
  const Icon = sorted ? IconChevronDown : IconChevronUp;
  return (
-  <th>
+  <th key={index}>
    <UnstyledButton onClick={onSort}>
     <Skeleton visible={loading} radius="md">
      <Group position="apart">
@@ -106,50 +106,50 @@ export const PopUpTable = (
   return (
     <>
     <tr
-    key={row.id+i +"-row"}
-    onDoubleClick={() => toggleSelect(row.id)}
-    onClick={() => {
-      if (selectOpen) toggleRow(row.id); 
-    }}
-    className={cx({ [classes.rowSelected]: selected })}
+      key={row.id+"-"+i +"-row"}
+      onDoubleClick={() => toggleSelect(row.id)}
+      onClick={() => {
+        if (selectOpen) toggleRow(row.id); 
+      }}
+      className={cx({ [classes.rowSelected]: selected })}
     >
-    {keys.map((value, index) => {
-      if (index < columns.length)
-      return (
-      <td onClick={()=>{setCurrentData(row); open()}} key={typeof row[value] == "object" && row[value] != null? row[value][0].label:row[value]+ "-data-row-"+index}>
-        {typeof row[value] == "object" && row[value] != null? row[value][0].label:row[value]}
-       </td>
-      );
-    })}
-    {selectOpen ? (
-      <td  key={row+"-data-selected"}>
-      <Checkbox
-       checked={selected}
-       readOnly
-       transitionDuration={0}
-       radius="xl"
-       />
-     </td>
-    ) : (
-      <td key={row+"-data-unselected"} align="center">
-      <Menu shadow="md" width={200}>
-       <Menu.Target>
-        <IconDotsVertical size={15} />
-       </Menu.Target>
+      {keys.map((value, index) => {
+        if (index < columns.length)
+        return (
+        <td onClick={()=>{setCurrentData(row); open()}} key={typeof row[value] == "object" && row[value] != null? row[value][0].label:row[value]+ "-data-row-"+index}>
+          {typeof row[value] == "object" && row[value] != null? row[value][0].label:row[value]}
+        </td>
+        );
+      })}
+      {selectOpen ? (
+        <td  key={row+"-data-selected"}>
+        <Checkbox
+        checked={selected}
+        readOnly
+        transitionDuration={0}
+        radius="xl"
+        />
+      </td>
+      ) : (
+        <td key={row+"-data-unselected"} align="center">
+        <Menu key={row.id+"-menu"} shadow="md" width={200}>
+        <Menu.Target>
+          <IconDotsVertical size={15} />
+        </Menu.Target>
 
-       <Menu.Dropdown>
-        <Menu.Label>Operations</Menu.Label>
-        <Menu.Item onClick={() => toggleSelect(row.id)}>Select</Menu.Item>
-        <Menu.Item rightSection={<IconLink />} key={row.id + "-" + "link"}>
-         Open
-        </Menu.Item>
-        <Menu.Divider />
-        <Menu.Item onClick={() => editHandler}>Edit</Menu.Item>
-        {/* <Menu.Item onClick={() => deleteHandler}>Delete</Menu.Item> */}
-       </Menu.Dropdown>
-      </Menu>
-     </td>
-    )}
+        <Menu.Dropdown>
+          <Menu.Label>Operations</Menu.Label>
+          <Menu.Item onClick={() => toggleSelect(row.id)}>Select</Menu.Item>
+          <Menu.Item rightSection={<IconLink />} key={row.id + "-" + "link"}>
+          Open
+          </Menu.Item>
+          <Menu.Divider />
+          <Menu.Item onClick={() => editHandler}>Edit</Menu.Item>
+          {/* <Menu.Item onClick={() => deleteHandler}>Delete</Menu.Item> */}
+        </Menu.Dropdown>
+        </Menu>
+      </td>
+      )}
     
    </tr>
     </>
@@ -157,10 +157,11 @@ export const PopUpTable = (
  });
  useEffect(() => {
   setTimeout(() => setLoading(false), 500);
-  // return ()=>{setTimeout(()=>setLoading(true), 500)}
+  return ()=>{setTimeout(()=>setLoading(true), 500)}
 
-  // setLoading(false);
+  setLoading(false);
  }, []);
+ // Main Component
  return (
   <ScrollArea h={600} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
     <Modal size={"xl"} key={"-modal"} opened={opened} onClose={close}>
@@ -176,7 +177,7 @@ export const PopUpTable = (
      <tr key={"Header-tratment"}>
       {columns.map((column, index) => (
        <Th
-        key={column.value + "-header"}
+        key={column.value +"-"+index +"-header"}
         sorted={ascending ?? sortBy}
         index={column.value + "-" + index}
         loading={loading}
